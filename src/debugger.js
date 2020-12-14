@@ -88,7 +88,7 @@ class Debugger {
     // create debug configuration
     provideDebugConfigurations(folder, token) {
         var src = Utils.getCurrentAsmFile();
-        var prg = (null != src) ? Utils.getOutputFilename(src, "prg") : "";
+        var prg = (null != src) ? Utils.getOutputFilename(src, "bin") : "";
 
         var config = {
             type: "asm",
@@ -122,7 +122,7 @@ class Debugger {
                 var src = Utils.getCurrentAsmFile();
 
                 if (null != src) {
-                    var prg = Utils.getOutputFilename(src, "prg");
+                    var prg = Utils.getOutputFilename(src, "bin");
                     config.binary = prg;
                 } else {
                     vscode.window.showErrorMessage("Could not launch debugger: Unknown program file, and there is no assembly file open to auto-detect it.");
@@ -165,7 +165,7 @@ class DebugSession extends debug.LoggingDebugSession {
     constructor(host) {
 
         // set log file name
-        super("vs64-debug.txt");
+        super("vc65x-debug.txt");
 
         this._host = host;
         this._settings = host._settings;
@@ -253,7 +253,7 @@ class DebugSession extends debug.LoggingDebugSession {
     }
 
     sendResponse(response) {
-        //console.log(`send response: ${response.command}(${JSON.stringify(response.body) })`);
+        console.log(`send response: ${response.command}(${JSON.stringify(response.body) })`);
         return super.sendResponse(response);
     }
 
@@ -290,7 +290,7 @@ class DebugSession extends debug.LoggingDebugSession {
 
         try {
             emu.init();
-            emu.loadProgram(this._launchBinary, Constants.ProgramAddressCorrection, this._launchPC);
+            emu.loadProgram(this._launchBinary, Constants.ProgramAddressCorrection, this._launchBase, this._launchPC);
         } catch (err) {
             response.success = false;
             response.message = err.toString();
@@ -340,6 +340,7 @@ class DebugSession extends debug.LoggingDebugSession {
         this.clearBreakpoints();
 
         var binaryPath = args.binary;
+        var forcedBaseAddress = this.parseAddressString(args.base);
         var forcedStartAddress = this.parseAddressString(args.pc);
 
         this._debugInfo = null;
@@ -351,7 +352,7 @@ class DebugSession extends debug.LoggingDebugSession {
 
         try {
             emu.init();
-            emu.loadProgram(binaryPath, Constants.ProgramAddressCorrection, forcedStartAddress);
+            emu.loadProgram(binaryPath, Constants.ProgramAddressCorrection, forcedBaseAddress, forcedStartAddress);
 
             if (null == this._debugInfo) {
                 var debugInfoPath = Utils.changeExtension(binaryPath, ".report");
@@ -359,6 +360,7 @@ class DebugSession extends debug.LoggingDebugSession {
             }
 
             this._launchBinary = binaryPath;
+            this._launchBase = forcedBaseAddress;
             this._launchPC = forcedStartAddress;
 
         } catch (err) {

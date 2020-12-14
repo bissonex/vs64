@@ -22,7 +22,7 @@ var CPU6510 = false;
 
 function getTime() {
     var t = process.hrtime();
-    return t[0]*1000000 + ((t[1]/1000)|0);
+    return t[0] * 1000000 + ((t[1] / 1000) | 0);
 }
 
 //-----------------------------------------------------------------------------------------------//
@@ -106,19 +106,19 @@ class Emulator extends CPU6502 {
         this._running = true;
         var thisInstance = this;
 
-        var promise = new Promise(function(resolve, reject) {
-            setTimeout(function() {
-                thisInstance.run(true, resolve, continueExecution); 
+        var promise = new Promise(function (resolve, reject) {
+            setTimeout(function () {
+                thisInstance.run(true, resolve, continueExecution);
             }, 0);
         });
 
         return promise;
     }
-    
+
     stop() { // jshint ignore:line
 
         this._running = false;
-        
+
     }
 
     run(runAsync, resolve, continueExecution) {
@@ -156,14 +156,14 @@ class Emulator extends CPU6502 {
                 if (pc < lastPC) {
                     breakpointIndex = 0;
                 }
-                
+
                 while (breakpointIndex < breakpoints.length &&
-                       breakpoints[breakpointIndex].address.address < pc) {
+                    breakpoints[breakpointIndex].address.address < pc) {
                     breakpointIndex++;
                 }
-    
+
                 var breakpoint = breakpoints[breakpointIndex];
-                if (null != breakpoint && pc ==  breakpoint.address.address) {
+                if (null != breakpoint && pc == breakpoint.address.address) {
                     if (null != breakpoint.logMessage) {
                         this.fireEvent('logpoint', breakpoint);
                     } else {
@@ -220,9 +220,9 @@ class Emulator extends CPU6502 {
         if (this._running && result.reason == Constants.InterruptReason.YIELD) {
             var thisInstance = this;
             if (Constants.EmulatorIterationSleepTime > 0) {
-                setTimeout(function() { thisInstance.run(true, resolve); }, Constants.EmulatorIterationSleepTime);
+                setTimeout(function () { thisInstance.run(true, resolve); }, Constants.EmulatorIterationSleepTime);
             } else {
-                process.nextTick(function() { thisInstance.run(true, resolve); });
+                process.nextTick(function () { thisInstance.run(true, resolve); });
             }
         } else if (resolve) {
             resolve(result);
@@ -243,17 +243,17 @@ class Emulator extends CPU6502 {
             this._memory[0x1] = 0xFF; // bankswitching
         } else if (null != startAddress) {
             // set reset vector to start address
-            this.write(0xFFFD, (startAddress>>8) & 0xFF);
+            this.write(0xFFFD, (startAddress >> 8) & 0xFF);
             this.write(0xFFFC, (startAddress & 0xFF));
         }
 
         this.S = 0xFF; // initialize stack pointer
         this.PC = startAddress;
-        this.opcode = this.read( this.PC );
+        this.opcode = this.read(this.PC);
         this.cycles = 0;
     }
 
-    read(addr){
+    read(addr) {
 
         if (addr < 0 || addr > 0xFFFF) {
             throw new Error('Illegal memory read at address: ' + addr.toString(16).toLowerCase());
@@ -264,32 +264,32 @@ class Emulator extends CPU6502 {
             /*
                 Bit 0 - LORAM: Configures RAM or ROM at $A000-$BFFF (see bankswitching)
                 Bit 1 - HIRAM: Configures RAM or ROM at $E000-$FFFF (see bankswitching)
-                Bit 2 - CHAREN: Configures I/O or ROM at $D000-$DFFF (see bankswitching) 
+                Bit 2 - CHAREN: Configures I/O or ROM at $D000-$DFFF (see bankswitching)
             */
 
             var bankswitching = (this._memory[0x0001] & 0xFF);
 
             if ((bankswitching & 0x01) && addr >= 0xE000) {
-                return this._roms.kernal[addr-0xE000] & 0xFF;
+                return this._roms.kernal[addr - 0xE000] & 0xFF;
             } else if ((bankswitching & 0x02) && addr >= 0xD000) {
-                return this._roms.char[addr-0xD000] & 0xFF;
+                return this._roms.char[addr - 0xD000] & 0xFF;
             } else if ((bankswitching & 0x04) && addr >= 0xA000 && addr <= 0xBFFF) {
-                return this._roms.basic[addr-0xA000] & 0xFF;
+                return this._roms.basic[addr - 0xA000] & 0xFF;
             }
 
         }
 
         return this._memory[addr] & 0xFF;
     }
-     
-    write(addr, value){
+
+    write(addr, value) {
         if (addr < 0 || addr > 0xFFFF) {
             throw new Error('Illegal memory read at address: ' + addr.toString(16).toLowerCase());
         }
         this._memory[addr] = (value & 0xFF);
     }
 
-    loadProgram(filename, autoOffsetCorrection, forcedStartAddress) {
+    loadProgram(filename, autoOffsetCorrection, forcedLoadAddress, forcedStartAddress) {
 
         var prg = null;
 
@@ -297,27 +297,36 @@ class Emulator extends CPU6502 {
             prg = fs.readFileSync(filename);
         } catch (err) {
             if (err.code == 'ENOENT') {
-                throw("file " + filename + " does not exist");
+                throw ("file " + filename + " does not exist");
             } else {
-                throw("unable to read file '" + filename + "'");
+                throw ("unable to read file '" + filename + "'");
             }
         }
 
         this._prg = prg;
 
-        this.injectProgram(prg, autoOffsetCorrection, forcedStartAddress);
+        this.injectProgram(prg, autoOffsetCorrection, forcedLoadAddress, forcedStartAddress);
     }
 
-    injectProgram(prg, autoOffsetCorrection, forcedStartAddress) {
+    injectProgram(prg, autoOffsetCorrection, forcedLoadAddress, forcedStartAddress) {
 
-        var addr = ((prg[1] << 8) | prg[0]);
-        var data = prg.slice(2);
-        var startAddr = addr;
+        var addr;
+        var data;
+        var startAddr;
+
+        if (null != forcedLoadAddress) {
+            addr = forcedLoadAddress;
+            data=prg;
+        } else {
+            addr = ((prg[1] << 8) | prg[0]);
+            data = prg.slice(2);
+            startAddr = addr;
+        }
 
         if (null != forcedStartAddress) {
 
             startAddr = forcedStartAddress;
-            
+
         } else if (true == autoOffsetCorrection) {
 
             // skip if...
@@ -354,17 +363,17 @@ class Emulator extends CPU6502 {
                 while (ofs < maxHeaderBytes) {
                     var c = data[ofs];
                     if (c < 0x30 || c > 0x39) break;
-                    addressCalc = addressCalc * 10 + (data[ofs]-0x30);
+                    addressCalc = addressCalc * 10 + (data[ofs] - 0x30);
                     ofs++;
                 }
-                
+
                 startAddr = addressCalc;
             }
         }
 
-        this.reset(startAddr||0);
+        this.reset(startAddr || 0);
         this._memory.set(data, addr);
-        this.opcode = this.read( this.PC );
+        this.opcode = this.read(this.PC);
     }
 }
 

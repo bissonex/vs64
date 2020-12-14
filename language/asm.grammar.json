@@ -131,7 +131,7 @@
 			"patterns": [
 				{
 					"name": "keyword.instructions",
-					"match": "(?i)[\\s]*\\b(adc|and|asl|bit|clc|cld|cli|clv|cmp|cpx|cpy|dec|dex|dey|eor|inc|inx|iny|lda|ldx|ldy|lsr|nop|ora|pha|php|pla|plp|rol|ror|sbc|sec|sed|sei|sta|stx|sty|tax|txa|tay|tya|tsx|txs)\\b"
+					"match": "(?i)[\\s]*\\b(adc|and|asl|bit|clc|cld|cli|clv|cmp|cop|cpx|cpy|dec|dex|dey|eor|inc|inx|iny|lda|ldx|ldy|lsr|mvn|mvp|nop|ora|pea|pei|per|pha|phb|phd|phk|php|pla|plb|plp|plx|ply|rep|rol|ror|sbc|sec|sed|sei|sep|sta|stp|stx|sty|stz|tax|tay|tcd|tcs|tdc|trb|tsb|tsc|tsx|txa|txs|txy|tya|tyx|wai|wdm|xba|xce)\\b"
 				}
 			]
 		},
@@ -167,7 +167,7 @@
 			"patterns": [
 				{
 					"name": "keyword.control",
-					"match": "(?i)[\\s]*\\b(bcc|bcs|beq|bmi|bne|bpl|brk|bvc|bvs|jmp|jsr|rti|rts)\\b"
+					"match": "(?i)[\\s]*\\b(bcc|bcs|beq|bmi|bne|bpl|bra|brk|brl|bvc|bvs|jmp|jsl|jsr|rti|rtl|rts)\\b"
 				}
 			]
 		},
