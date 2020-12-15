@@ -16,7 +16,15 @@ BIND(module);
 // Required Modules
 //-----------------------------------------------------------------------------------------------//
 var Constants = require('src/constants');
-var CPU6502 = require('src/6502/cpu');
+const cpu_type = "65C02";
+
+if (cpu_type === "6502") {
+    var CPU = require('src/6502/cpu');
+} else if (cpu_type === "65C02") {
+    var CPU = require('src/6502/65C02');
+} else {
+    throw new Error('Must select an cpu_type');
+}
 
 var CPU6510 = false;
 
@@ -29,8 +37,7 @@ function getTime() {
 // Emulator
 //-----------------------------------------------------------------------------------------------//
 
-class Emulator extends CPU6502 {
-
+class Emulator extends CPU {
     constructor(session) {
         super();
 

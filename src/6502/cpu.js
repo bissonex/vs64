@@ -16,7 +16,8 @@ class CPU6502{
 
 	    this.irq = 0; this.nmi = 0; // IRQ lines
 
-	    this.tmp = 0; this.addr = 0; // Temporary registers
+		this.tmp = 0; this.addr = 0; // Temporary registers
+		this.opcodes = CPU6502op;
 	    this.opcode = 0; // Current opcode
 	    this.cycles = 0; // Cycles counter
     }
@@ -45,7 +46,7 @@ class CPU6502{
      */
     step() {
 	    this.opcode = this.read( this.PC++ );
-	    CPU6502op[ this.opcode ]( this );
+	    this.opcodes[ this.opcode ]( this );
     }
 
     fmt(value) {
