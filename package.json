@@ -1,35 +1,40 @@
 {
-	"name": "vs64",
-	"displayName": "vs64",
-	"description": "VS64 - The C64 Development Environment",
-	"version": "0.1.13",
+	"name": "vc65x",
+	"displayName": "vc65x",
+	"description": "VC65X - The 65X Development Environment",
+	"version": "0.0.3",
 	"preview": true,
-	"publisher": "rosc",
+	"publisher": "bissonex",
 	"license": "GPL-3.0",
-	"icon": "images/icon.png",
+	"icon": "images/icon_65x.png",
 	"author": {
-		"name": "Roland Schabenberger"
+		"name": "Eric Bissonnette"
 	},
 	"private": true,
 	"engines": {
-		"vscode": "^1.30.0"
+		"vscode": "^1.52.0"
 	},
 	"main": "./main.js",
 	"bin": "main.js",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/rosc77/vs64.git"
+		"url": "https://github.com/bissonex/vc65x.git"
 	},
 	"scripts": {
-		"postinstall": "node ./node_modules/vscode/bin/install",
-		"test": "node ./node_modules/vscode/bin/test"
+		"lint": "eslint .",
+		"pretest": "npm run lint",
+		"test": "node ./test/runTest.js"
 	},
 	"devDependencies": {
-		"@types/mocha": "^2.2.42",
-		"@types/node": "^8.10.53",
-		"eslint": "^4.11.0",
-		"typescript": "^3.6.2",
-		"vscode": "^1.1.36"
+		"@types/glob": "^7.1.1",
+		"@types/mocha": "^7.0.1",
+		"@types/node": "^12.11.7",
+		"@types/vscode": "^1.52.0",
+		"eslint": "^6.8.0",
+		"glob": "^7.1.6",
+		"mocha": "^7.0.1",
+		"typescript": "^3.7.5",
+		"vscode-test": "^1.3.0"
 	},
 	"galleryBanner": {
 		"color": "#6c9fd2",
@@ -37,9 +42,9 @@
 	},
 	"activationEvents": [
 		"onLanguage:asm",
-		"onCommand:c64.build",
-		"onCommand:c64.run",
-		"onCommand:c64.debug",
+		"onCommand:vc65x.build",
+		"onCommand:vc65x.run",
+		"onCommand:vc65x.debug",
 		"onDebug"
 	],
 	"categories": [
@@ -52,19 +57,19 @@
 	"contributes": {
 		"commands": [
 			{
-				"command": "c64.build",
+				"command": "vc65x.build",
 				"title": "build",
-				"category": "C64"
+				"category": "VC65X"
 			},
 			{
-				"command": "c64.run",
+				"command": "vc65x.run",
 				"title": "run",
-				"category": "C64"
+				"category": "VC65X"
 			},
 			{
-				"command": "c64.debug",
+				"command": "vc65x.debug",
 				"title": "debug",
-				"category": "C64"
+				"category": "VC65X"
 			}
 		],
 		"languages": [
@@ -99,64 +104,64 @@
 		],
 		"configuration": {
 			"type": "object",
-			"title": "C64 tools configuration",
+			"title": "VC65X tools configuration",
 			"properties": {
-				"c64.verbose": {
+				"vc65x.verbose": {
 					"type": "boolean",
 					"default": false,
 					"description": "Flag to enable verbose output of extension"
 				},
-				"c64.definitions": {
+				"vc65x.definitions": {
 					"type": "string",
 					"default": "",
 					"description": "Comma-separated list of symbols to define, e.g. A=1,B=4"
 				},
-				"c64.autoBuild": {
+				"vc65x.autoBuild": {
 					"type": "boolean",
 					"default": true,
 					"description": "Enable automatic build before running or debugging"
 				},
-				"c64.backgroundBuild": {
+				"vc65x.backgroundBuild": {
 					"type": "boolean",
 					"default": true,
 					"description": "Enable automatic background build after source changes"
 				},
-				"c64.assemblerPath": {
+				"vc65x.assemblerPath": {
 					"type": "string",
 					"default": "acme",
 					"description": "Path to assembler executable"
 				},
-				"c64.assemblerArgs": {
+				"vc65x.assemblerArgs": {
 					"type": "string",
 					"default": "",
 					"description": "Additional assembler command line options"
 				},
-				"c64.assemblerSearchPath": {
+				"vc65x.assemblerSearchPath": {
 					"type": "string",
 					"default": "./",
 					"description": "Assembler source search path (use comma to separate items)"
 				},
-				"c64.emulatorPath": {
+				"vc65x.emulatorPath": {
 					"type": "string",
 					"default": "x64",
 					"description": "Path to emulator executable"
 				},
-				"c64.emulatorArgs": {
+				"vc65x.emulatorArgs": {
 					"type": "string",
 					"default": "",
 					"description": "Additional emulator command line options"
 				},
-				"c64.debuggerEnabled": {
+				"vc65x.debuggerEnabled": {
 					"type": "boolean",
-					"default": true,
+					"default": false,
 					"description": "Flag to enable C64 debugger instead of emulator"
 				},
-				"c64.debuggerPath": {
+				"vc65x.debuggerPath": {
 					"type": "string",
 					"default": "c64debugger",
 					"description": "Path to C64 debugger executable"
 				},
-				"c64.debuggerArgs": {
+				"vc65x.debuggerArgs": {
 					"type": "string",
 					"default": "",
 					"description": "Additional C64 debugger command line options"
@@ -171,7 +176,7 @@
 		"debuggers": [
 			{
 				"type": "asm",
-				"label": "C64 Debugger",
+				"label": "VC65X Debugger",
 				"program": "./src/debugger.js",
 				"runtime": "node",
 				"configurationAttributes": {
@@ -182,13 +187,18 @@
 						"properties": {
 							"binary": {
 								"type": "string",
-								"description": "Path to C64 binary",
+								"description": "Path to 65X binary",
 								"default": ""
+							},
+							"base": {
+								"type": "string",
+								"description": "Base address of binary image",
+								"default": "$5000"
 							},
 							"pc": {
 								"type": "string",
 								"description": "Initial program counter (PC)",
-								"default": "$0000"
+								"default": "$5000"
 							}
 						}
 					}
@@ -196,13 +206,15 @@
 				"initialConfigurations": [],
 				"configurationSnippets": [
 					{
-						"label": "C64 Debugger: Launch",
-						"description": "A new configuration for launching the C64 debugger.",
+						"label": "VC65X Debugger: Launch",
+						"description": "A new configuration for launching the VC65X debugger.",
 						"body": {
 							"type": "asm",
 							"request": "launch",
-							"name": "Launch Program",
-							"binary": ""
+							"name": "Debug VC65X",
+							"binary": "",
+							"base":"$5000",
+							"pc":"$5000"
 						}
 					}
 				],
@@ -212,6 +224,6 @@
 	},
 	"dependencies": {
 		"await-notify": "^1.0.1",
-		"vscode-debugadapter": "^1.36.0"
+		"vscode-debugadapter": "^1.43.0"
 	}
 }

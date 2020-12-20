@@ -36,7 +36,7 @@ class Extension {
 
     /**
      * @param {vscode.ExtensionContext} context
-     */    
+     */
     constructor(context) {
         this._context = context;
         this._output = null;
@@ -77,13 +77,13 @@ class Extension {
         }
 
         { // create output channel
-            this._output = vscode.window.createOutputChannel("C64");
+            this._output = vscode.window.createOutputChannel("VC65X");
         }
 
         var output = this._output;
 
         { // register command: build
-            let disposable = vscode.commands.registerCommand('c64.build', function() {
+            let disposable = vscode.commands.registerCommand('vc65x.build', function() {
 
                 if (!hasWorkspace) {
                     vscode.window.showErrorMessage("No folder open in workspace");
@@ -98,7 +98,7 @@ class Extension {
         }
 
         { // register command: run
-            let disposable = vscode.commands.registerCommand('c64.run', function() {
+            let disposable = vscode.commands.registerCommand('vc65x.run', function() {
 
                 if (!hasWorkspace) {
                     vscode.window.showErrorMessage("No folder open in workspace");
@@ -117,7 +117,7 @@ class Extension {
         }
 
         { // register command: debug
-            let disposable = vscode.commands.registerCommand('c64.debug', function() {
+            let disposable = vscode.commands.registerCommand('vc65x.debug', function() {
 
                 if (!hasWorkspace) {
                     vscode.window.showErrorMessage("No folder open in workspace");
@@ -275,10 +275,10 @@ class Extension {
             s.reportFilename = "";
             s.labelsFilename = "";
         } else {
-            s.prgfilename = Utils.getOutputFilename(s.filename, "prg");
+            s.prgfilename = Utils.getOutputFilename(s.filename, "bin");
             s.reportFilename = Utils.getOutputFilename(s.filename, "report");
             s.labelsFilename = Utils.getOutputFilename(s.filename, "labels");
-    
+
             if (Utils.compareFileTime(s.filename, s.prgfilename) >= 0 &&
                 Utils.compareFileTime(s.filename, s.reportFilename) >= 0 &&
                 Utils.compareFileTime(s.filename, s.labelsFilename) >= 0) {
@@ -354,7 +354,7 @@ class Extension {
 
         var executable = Utils.getAbsoluteFilename(settings.assemblerPath);
         var args = [
-            "-f", "cbm",
+            "-f", "plain",
             "-o", sessionState.prgfilename,
             "-r", sessionState.reportFilename,
             "--vicelabels", sessionState.labelsFilename
@@ -386,7 +386,7 @@ class Extension {
         var thisInstance = this;
 
         state.assemblerProcess = this.exec(
-            executable, args, 
+            executable, args,
             function(procInfo) { // success function
                 thisInstance.updateDiagnostics(procInfo);
                 if (null != successFunction) {
@@ -529,7 +529,7 @@ class Extension {
                 }
             }
         });
-        
+
         proc.stderr.on('data', (data) => {
             var lines = (data+"").split('\n');
             for (var i=0, line; (line=lines[i]); i++) {
@@ -551,7 +551,7 @@ class Extension {
                 vscode.window.showErrorMessage("failed to start '" + executable + "'");
             }
         });
-        
+
         proc.on('exit', (code) => {
             procInfo.exited = true;
             procInfo.exitCode = code;
@@ -592,7 +592,7 @@ class Extension {
                 return " [ERROR: file not found]";
             }
             return " [" + err.message + "]";
-        }        
+        }
 
         try {
             fs.accessSync(path, fs.constants.X_OK);
@@ -620,53 +620,53 @@ class Extension {
 
         let workspaceConfig = vscode.workspace.getConfiguration();
 
-        settings.verbose = workspaceConfig.get("c64.verbose")||false;
+        settings.verbose = workspaceConfig.get("vc65x.verbose")||false;
 
         if (true == settings.verbose) {
-            console.log("[C64] extension verbose mode enabled");
+            console.log("[VC65X] extension verbose mode enabled");
         }
 
-        settings.autoBuild = workspaceConfig.get("c64.autoBuild")||true;
+        settings.autoBuild = workspaceConfig.get("vc65x.autoBuild")||true;
         if (true == settings.verbose && true == settings.autoBuild) {
-            console.log("[C64] auto build enabled");
+            console.log("[VC65X] auto build enabled");
         }
 
-        settings.definitions = workspaceConfig.get("c64.definitions") || "";
+        settings.definitions = workspaceConfig.get("vc65x.definitions") || "";
 
-        settings.backgroundBuild = workspaceConfig.get("c64.backgroundBuild")||true;
+        settings.backgroundBuild = workspaceConfig.get("vc65x.backgroundBuild")||true;
         if (true == settings.verbose && true == settings.backgroundBuild) {
-            console.log("[C64] background build enabled");
+            console.log("[VC65X] background build enabled");
         }
 
-        settings.assemblerPath = Utils.findExecutable(workspaceConfig.get("c64.assemblerPath")||"");
-        settings.assemblerArgs = workspaceConfig.get("c64.assemblerArgs")||"";
-        settings.assemblerSearchPath = workspaceConfig.get("c64.assemblerSearchPath");
+        settings.assemblerPath = Utils.findExecutable(workspaceConfig.get("vc65x.assemblerPath")||"");
+        settings.assemblerArgs = workspaceConfig.get("vc65x.assemblerArgs")||"";
+        settings.assemblerSearchPath = workspaceConfig.get("vc65x.assemblerSearchPath");
         settings.assemblerEnabled = (settings.assemblerPath != "");
 
         if (true == settings.verbose) {
-            this.logExecutableState(settings.assemblerPath, "[C64] assembler path: " + settings.assemblerPath);
+            this.logExecutableState(settings.assemblerPath, "[VC65X] assembler path: " + settings.assemblerPath);
         }
 
-        settings.emulatorPath = Utils.findExecutable(workspaceConfig.get("c64.emulatorPath")||"");
-        settings.emulatorArgs = workspaceConfig.get("c64.emulatorArgs")||"";
+        settings.emulatorPath = Utils.findExecutable(workspaceConfig.get("vc65x.emulatorPath")||"");
+        settings.emulatorArgs = workspaceConfig.get("vc65x.emulatorArgs")||"";
         settings.emulatorEnabled = (settings.emulatorPath != "");
 
         if (true == settings.verbose) {
-            this.logExecutableState(settings.emulatorPath, "[C64] emulator path: " + settings.emulatorPath);
+            this.logExecutableState(settings.emulatorPath, "[VC65X] emulator path: " + settings.emulatorPath);
         }
 
-        settings.debuggerEnabled = workspaceConfig.get("c64.debuggerEnabled")||false;
-        settings.debuggerPath = Utils.findExecutable(workspaceConfig.get("c64.debuggerPath")||"");
-        settings.debuggerArgs = workspaceConfig.get("c64.debuggerArgs")||"";
+        settings.debuggerEnabled = workspaceConfig.get("vc65x.debuggerEnabled")||false;
+        settings.debuggerPath = Utils.findExecutable(workspaceConfig.get("vc65x.debuggerPath")||"");
+        settings.debuggerArgs = workspaceConfig.get("vc65x.debuggerArgs")||"";
         if (settings.debuggerPath == "") {
             settings.debuggerEnabled = false;
         }
 
         if (true == settings.verbose) {
             if (settings.debuggerEnabled) {
-                this.logExecutableState(settings.debuggerPath, "[C64] debugger path: " + settings.debuggerPath);
+                this.logExecutableState(settings.debuggerPath, "[VC65X] debugger path: " + settings.debuggerPath);
             } else {
-                console.log("[C64] using emulator for debugging (c64 debugger disabled)");
+                console.log("[VC65X] using emulator for debugging (vc65x debugger disabled)");
             }
         }
     }
@@ -682,7 +682,7 @@ var extensionInstance = null;
  * @param {vscode.ExtensionContext} context
  */
 function activate(context) {
-    
+
     return new Promise(function(resolve /*, reject*/) {
         if (null == extensionInstance) {
             extensionInstance = new Extension(context);

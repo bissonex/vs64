@@ -16,7 +16,7 @@ var Constants = {
     DebugLoggingEnabled: true,
     OutputDirectory: ".cache",
     AssemblerLanguageId: "asm",
-    AlwaysShowOutputChannel: false,
+    AlwaysShowOutputChannel: true,
     ProgramAddressCorrection: true,
     EmulatorIterationMaxSteps: 0, // max steps per iteration (0: no limit)
     EmulatorIterationExecutionTime: 10, // milliseconds
