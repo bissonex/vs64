@@ -1,4 +1,4 @@
 #!/bin/bash
 
-yarn install
+npm install
 vsce package

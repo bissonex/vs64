@@ -42,9 +42,9 @@ const StatementType = {
 };
 
 const OPCODES =
-    "adc,and,asl,bcc,bcs,beq,bit,bmi,bne,bpl,bra,brk,brl,bvc,bvs,clc,cld,cli,clv,cmp,cop,cpx,cpy,dec,dex,"+
-    "dey,eor,inc,inx,iny,jmp,jsl,jsr,lda,ldx,ldy,lsr,mvn,mvp,nop,ora,pea,pei,per,pha,phb,phd,phk,php,phx,phy,pla,plb,pld,plp,plx,ply,rep,rol,ror,rti,rtl,rts,sbc,"+
-    "sec,sed,sei,sep,sta,stp,stx,sty,stz,tax,tay,tcd,tcs,tdc,trb,tsb,tsc,tsx,txa,txs,txy,tya,tyx,wai,wdm,xba,xce,";
+    "adc,and,asl,bcc,bcs,beq,bit,bmi,bne,bpl,brk,bvc,bvs,clc,cld,cli,clv,cmp,cpx,cpy,dec,dex,"+
+    "dey,eor,inc,inx,iny,jmp,jsr,lda,ldx,ldy,lsr,nop,ora,pha,php,pla,plp,rol,ror,rti,rts,sbc,"+
+    "sec,sed,sei,sta,stx,sty,tax,tay,tsx,txa,txs,tya,";
 
 //-----------------------------------------------------------------------------------------------//
 // Debug Info
@@ -226,7 +226,7 @@ class DebugInfo {
             }
         }
 
-        var tokenDump = tokens.join("|"); console.log(tokenDump);
+        //var tokenDump = tokens.join("|"); console.log(tokenDump);
 
         var elements = [];
         var lastElementType = 0;
