@@ -29,9 +29,23 @@ WAIT = $FBD1
         !AS
         !RS
         LDA     #$09
+        STA     $00
+        TRB     $00
+        PHA
+        LDX     #$23
+        PHX
+        LDY     #$55
+        PHY
         INC
+        PLA
+        PLX
+        PLY
+        DEC
+        ADC     ($00)
+        BRA     hop
         STA     SID_ATTACK_1
         LDA     #$09
+hop
         STA     SID_SUSTAIN_2
         STA     SID_ATTACK_2
         LDA     #$80
@@ -68,8 +82,7 @@ next_sample
         STA     SID_CONTROL_1
         STA     SID_CONTROL_2
         STA     SID_CONTROL_3
-
+test:
         CPX     #$B8
-        BNE     next_sample
         RTS
 
