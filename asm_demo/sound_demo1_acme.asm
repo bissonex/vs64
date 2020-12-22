@@ -29,6 +29,8 @@ WAIT = $FBD1
         !AS
         !RS
         LDA     #$09
+        TAX
+        TXY
         STA     $00
         TRB     $00
         PHA

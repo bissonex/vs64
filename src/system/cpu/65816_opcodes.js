@@ -4,8 +4,9 @@
 
 var CPU65816op = new Array();
 
-/*  AND iz  */ CPU65816op[0x32] = function(m) { m.iz(); m.and(); };
 
+/*  TXY     */ CPU65816op[0x9B] = function(m) { m.imp(); m.txy(); };
+/*  TYX     */ CPU65816op[0xBB] = function(m) { m.imp(); m.tyx(); };
 
 
 module.exports = CPU65816op;
