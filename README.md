@@ -72,6 +72,7 @@ In order to run a compiled 65X program (`.bin`) using the embedded 6502 CPU emul
                 "request": "launch",
                 "name": "Launch Program",
                 "pc": "$1000",
+                "arch":"6502",
                 "binary": "C:\\Work\\vc65x\\demo1\\.cache\\src\\test.bin"
             }
         ]

@@ -199,6 +199,11 @@
 								"type": "string",
 								"description": "Initial program counter (PC)",
 								"default": "$5000"
+							},
+							"arch": {
+								"type": "string",
+								"description": "CPU architecture",
+								"default": "6502"
 							}
 						}
 					}
@@ -214,7 +219,8 @@
 							"name": "Debug VC65X",
 							"binary": "",
 							"base":"$5000",
-							"pc":"$5000"
+							"pc":"$5000",
+							"arch": "6502"
 						}
 					}
 				],

@@ -20,7 +20,7 @@ const fs = require('fs');
 var Constants = require('src/constants');
 const createMemory = require('./system/create-memory');
 const CPU6502 = require('./system/cpu/cpu');
-//const CPU65C02 = require('./system/cpu/65C02_cpu');
+const CPU65C02 = require('./system/cpu/65C02_cpu');
 const MemoryMapper = require('./system/memory-mapper.js');
 const createScreenDevice = require('./system/peripherals/screen-device');
 
@@ -47,13 +47,29 @@ class Emulator {
 
         this._writableBytes = new Uint8Array(this._memory.buffer);
 
-        this._cpu = new CPU6502(this._MM);
+
         //this._cpu = new CPU65C02(this._MM);
 
-        this.init();
+        //this.init();
     }
 
-    init() {
+    init(forcedCpuArchitecture) {
+
+        if (null != forcedCpuArchitecture) {
+            switch (forcedCpuArchitecture) {
+                case "6502":
+                    this._cpu = new CPU6502(this._MM);
+                    break;
+
+                case "65C02":
+                    this._cpu = new CPU65C02(this._MM);
+                default:
+                    break;
+            }
+
+        } else {
+            this._cpu = new CPU6502(this._MM);
+        }
         this._running = false;
         this._prg = null;
     }

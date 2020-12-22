@@ -155,6 +155,7 @@ Debugger.VARIABLES_FLAGS = 2;
 Debugger.VARIABLES_SYMBOLS = 3;
 Debugger.VARIABLES_STATS = 4;
 Debugger.VARIABLES_STACK = 5;
+Debugger.VARIABLES_MEMORY = 6;
 
 //-----------------------------------------------------------------------------------------------//
 // Debug Session
@@ -342,6 +343,7 @@ class DebugSession extends debug.LoggingDebugSession {
         var binaryPath = args.binary;
         var forcedBaseAddress = this.parseAddressString(args.base);
         var forcedStartAddress = this.parseAddressString(args.pc);
+        var forcedCpuArchitecture = args.arch;
 
         this._debugInfo = null;
         this._breakpoints = null;
@@ -351,7 +353,7 @@ class DebugSession extends debug.LoggingDebugSession {
         var emu = this._emulator;
 
         try {
-            emu.init();
+            emu.init(forcedCpuArchitecture);
             emu.loadProgram(binaryPath, Constants.ProgramAddressCorrection, forcedBaseAddress, forcedStartAddress);
 
             if (null == this._debugInfo) {
@@ -492,7 +494,8 @@ class DebugSession extends debug.LoggingDebugSession {
                 new debug.Scope("Flags",      Debugger.VARIABLES_FLAGS,     false),
                 new debug.Scope("Symbols",    Debugger.VARIABLES_SYMBOLS,   false),
                 new debug.Scope("Statistics", Debugger.VARIABLES_STATS,     false),
-                new debug.Scope("Stack",      Debugger.VARIABLES_STACK,     false)
+                new debug.Scope("Stack",      Debugger.VARIABLES_STACK,     false),
+                new debug.Scope("Memory",     Debugger.VARIABLES_MEMORY,     false)
             ];
 
             scopes[0].presentationHint = 'registers';
@@ -537,7 +540,7 @@ class DebugSession extends debug.LoggingDebugSession {
                     { name: "(overflow) V",    type: "flag", value: this.formatBit(flags.V), variablesReference: 0 },
                     { name: "(break) B",       type: "flag", value: this.formatBit(flags.B), variablesReference: 0 },
                     { name: "(decimal) D",     type: "flag", value: this.formatBit(flags.D), variablesReference: 0 },
-                    { name: "(irq disable) I", type: "flag", value: this.formatBit(flags.I), variablesReference: 0 },
+                    { name: "(IRQ disable) I", type: "flag", value: this.formatBit(flags.I), variablesReference: 0 },
                     { name: "(zero) Z",        type: "flag", value: this.formatBit(flags.Z), variablesReference: 0 },
                     { name: "(carry) C",       type: "flag", value: this.formatBit(flags.C), variablesReference: 0 }
                 ];
@@ -576,14 +579,14 @@ class DebugSession extends debug.LoggingDebugSession {
                         }
                     }
                 }
-            } else  if (Debugger.VARIABLES_STATS == args.variablesReference) {
+            } else if (Debugger.VARIABLES_STATS == args.variablesReference) {
 
                 variables = [
                     { name: "Cycles", type: "stat", value: stats.cycles.toString(), variablesReference: 0 },
                     { name: "Opcode", type: "stat", value: this.formatValue(stats.opcode), variablesReference: 0 }
                 ];
 
-            } else  if (Debugger.VARIABLES_STACK == args.variablesReference) {
+            } else if (Debugger.VARIABLES_STACK == args.variablesReference) {
 
                 let stackUsage = 255-stats.registers.S;
 
@@ -594,6 +597,20 @@ class DebugSession extends debug.LoggingDebugSession {
                         value: "(" + (stackUsage) + ")",
                         indexedVariables: stackUsage,
                         variablesReference: Debugger.VARIABLES_STACK+1000
+                    }
+                ];
+
+            } else  if (Debugger.VARIABLES_MEMORY== args.variablesReference) {
+
+                let memoryUsage = 16;
+
+                variables = [
+                    {
+                        name: "Memory",
+                        type: "memory",
+                        value: "(" + (memoryUsage) + ")",
+                        indexedVariables: memoryUsage,
+                        variablesReference: Debugger.VARIABLES_MEMORY+1000
                     }
                 ];
 
@@ -616,6 +633,26 @@ class DebugSession extends debug.LoggingDebugSession {
                     variables.push( {
                         name: "$" + Utils.fmt(addr.toString(16), 2),
                         type: "stack",
+                        value: this.formatByte(value),
+                        variablesReference: 0
+                    });
+                }
+
+            } else if (Debugger.VARIABLES_MEMORY + 1000 == args.variablesReference) {
+
+                var ofs = args.start;
+                var count = args.count;
+
+
+
+                variables = [];
+
+                for (let i=0; i<count; i++) {
+                    var addr = 0x0000;
+                    var value = emu.read(addr+i);
+                    variables.push( {
+                        name: "$" + Utils.fmt((addr+i).toString(16), 4),
+                        type: "memory",
                         value: this.formatByte(value),
                         variablesReference: 0
                     });
@@ -698,7 +735,7 @@ class DebugSession extends debug.LoggingDebugSession {
         var emu = this._emulator;
         emu.stop();
 
-        var e = new debug.StoppedEvent("pause", Debugger.THREAD_ID);
+        var e = new debug.StoppedEvent({reason: "pause", threadId: Debugger.THREAD_ID});
         e.body.text = "Successfully paused";
         this.sendEvent(e);
 	}
