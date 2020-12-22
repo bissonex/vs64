@@ -79,6 +79,10 @@ class CPU65C02 extends CPU6502{
         this.Z = ((this.tmp & this.A) == 0) ? 1 : 0;
         this.tmp = this.tmp & ~this.A;
         this.write(this.addr, this.tmp);
+    }
+
+    stz() {
+		this.write(this.addr, 0);
 	}
 
 	tsb() {

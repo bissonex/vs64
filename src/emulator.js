@@ -19,8 +19,11 @@ const fs = require('fs');
 //-----------------------------------------------------------------------------------------------//
 var Constants = require('src/constants');
 const createMemory = require('./system/create-memory');
+
 const CPU6502 = require('./system/cpu/cpu');
 const CPU65C02 = require('./system/cpu/65C02_cpu');
+const CPU65816 = require('./system/cpu/65816_cpu');
+
 const MemoryMapper = require('./system/memory-mapper.js');
 const createScreenDevice = require('./system/peripherals/screen-device');
 
@@ -39,7 +42,7 @@ class Emulator {
         this._session = session;
 
         this._MM = new MemoryMapper();
-        this._memory = createMemory(2**16);
+        this._memory = createMemory(2 ** 16);
         this._MM.map(this._memory, 0, 0xffff);
 
         // Map 0xFF bytes of the address space to an "output device" - just stdout
@@ -63,6 +66,10 @@ class Emulator {
 
                 case "65C02":
                     this._cpu = new CPU65C02(this._MM);
+
+                case "65816":
+                    this._cpu = new CPU65816(this._MM);
+
                 default:
                     break;
             }
@@ -271,7 +278,7 @@ class Emulator {
      * Execute a single opcode
      */
     step() {
-	    this._cpu.step();
+        this._cpu.step();
     }
 
 
@@ -320,7 +327,7 @@ class Emulator {
 
         if (null != forcedLoadAddress) {
             addr = forcedLoadAddress;
-            data=prg;
+            data = prg;
         } else {
             addr = ((prg[1] << 8) | prg[0]);
             data = prg.slice(2);

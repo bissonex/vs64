@@ -36,6 +36,11 @@ var CPU65C02op = new Array();
 
 /*  STA iz  */ CPU65C02op[0x81] = function(m) { m.iz(); m.sta(); };
 
+/*  STZ abs */ CPU65C02op[0x9C] = function(m) { m.abs(); m.stz(); };
+/*  STZ zp  */ CPU65C02op[0x64] = function(m) { m.zp(); m.stz(); };
+/*  STZ abx */ CPU65C02op[0x9E] = function(m) { m.abxp(); m.stz(); };
+/*  STZ zpx */ CPU65C02op[0x74] = function(m) { m.zpx(); m.stz(); };
+
 /*  TRB abs */ CPU65C02op[0x1C] = function(m) { m.abs(); m.trb(); };
 /*  TRB zp  */ CPU65C02op[0x14] = function(m) { m.zp(); m.trb(); };
 
