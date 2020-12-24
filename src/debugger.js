@@ -398,6 +398,7 @@ class DebugSession extends debug.LoggingDebugSession {
             }
             var sourceBreakpoints = args.breakpoints;
 
+            this.clearBreakpoints();
             for (var i=0, sourceBreakpoint; (sourceBreakpoint=sourceBreakpoints[i]); i++) {
 
                 var breakpoint = this.addBreakpoint(source, sourceBreakpoint.line, sourceBreakpoint.logMessage);
@@ -683,14 +684,14 @@ class DebugSession extends debug.LoggingDebugSession {
 
             if ("#$" == expr.substr(0, 2) && expr.length == 4) {
                 var exprValue = parseInt(expr.substr(2), 16);
-                value = "(const) " + this.formatByte(exprValue);
+                value = "(const) #" + this.formatByte(exprValue);
             } else if ("$" == expr.charAt(0) && expr.length == 5) {
                 var addr = parseInt(expr.substr(1), 16);
                 var symbolinfo = this.formatSymbol({ value: addr, isAddress:true });
                 value = "(address) " + expr + " = " + symbolinfo.value;
             } else if ("$" == expr.charAt(0) && expr.length == 3) {
                 var numValue = parseInt(expr.substr(1), 16);
-                value = "(const) " + this.formatByte(numValue);
+                value = "(const) #" + this.formatByte(numValue);
             } else if (expr.toUpperCase() == "A") {
                 value = "(accumulator) A = " + this.formatByte(registers.A);
             } else if (expr.toUpperCase() == "X") {
@@ -709,7 +710,8 @@ class DebugSession extends debug.LoggingDebugSession {
                 } else {
                     var label = this.getLabel(expr);
                     if (null != label) {
-                        value = label.name + ": " + this.formatAddress(label.address) + ", line " + label.line;
+                        var value = emu.read(label.address);
+                        value = label.name + ": " + this.formatAddress(label.address) + " [#" + this.formatByte(value) + "], line " + label.line ;
                     }
                 }
             }
@@ -868,11 +870,13 @@ class DebugSession extends debug.LoggingDebugSession {
     }
 
     formatByte(value) {
-        return "$" + Utils.fmt(value.toString(16), 2) + " (" + value.toString() + ")";
+        //return "$" + Utils.fmt(value.toString(16), 2) + " (" + value.toString() + ")";
+        return "$" + Utils.fmt(value.toString(16), 2);
     }
 
     formatWord(value) {
-        return "$" + Utils.fmt(value.toString(16), 4) + " (" + value.toString() + ")";
+        //return "$" + Utils.fmt(value.toString(16), 4) + " (" + value.toString() + ")";
+        return "$" + Utils.fmt(value.toString(16), 4);
     }
 
     formatSymbol(symbol) {

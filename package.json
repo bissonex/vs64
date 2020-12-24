@@ -81,6 +81,7 @@
 					"acme"
 				],
 				"extensions": [
+					".S",
 					".asm",
 					".acme",
 					".a",

@@ -26,6 +26,7 @@ const CPU65816 = require('./system/cpu/65816_cpu');
 
 const MemoryMapper = require('./system/memory-mapper.js');
 const createScreenDevice = require('./system/peripherals/screen-device');
+const createUartDevice = require('./system/peripherals/uart');
 
 function getTime() {
     var t = process.hrtime();
@@ -46,7 +47,8 @@ class Emulator {
         this._MM.map(this._memory, 0, 0xffff);
 
         // Map 0xFF bytes of the address space to an "output device" - just stdout
-        this._MM.map(createScreenDevice(), 0x3000, 0x30ff, true);
+        //this._MM.map(createScreenDevice(), 0x6000, 0x30ff, true);
+        this._MM.map(createUartDevice(), 0x6000, 0x60ff, true);
 
         this._writableBytes = new Uint8Array(this._memory.buffer);
 
