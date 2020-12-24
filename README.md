@@ -71,7 +71,8 @@ In order to run a compiled 65X program (`.bin`) using the embedded 6502 CPU emul
                 "type": "asm",
                 "request": "launch",
                 "name": "Launch Program",
-                "pc": "$1000",
+                "pc": "0x0100",
+                "base": "0x0000",
                 "arch":"6502",
                 "binary": "C:\\Work\\vc65x\\demo1\\.cache\\src\\test.bin"
             }
@@ -98,6 +99,14 @@ The default build output path is ".cache" within the workspace root folder.
 
 A 16-bit address in decimal or $hexadecimal form.
 
+> `base`: Optional parameter to overwrite the base load address of the 65X program
+
+A 16-bit address in decimal or $hexadecimal form.
+
+> `arch`: Optional parameter to overwrite the CPU architecture of the emulator.
+
+Select from "6502", "65C02" or "65816".
+
 ## Open Source
 
 This package includes open source from other developers and I would like to thank all of those:
@@ -107,7 +116,7 @@ This package includes open source from other developers and I would like to than
 
 ## ToDo
 - [X] Implement 65C02 variant
-- [ ] Implement 65C816 variant
+- [ ] Implement 65816 variant
 - [ ] add [v6502r](https://github.com/floooh/v6502r) as emulation option
 ## Ideas Taken From
 * Captain JiNX - VSCode KickAss (C64)
