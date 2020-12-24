@@ -26,6 +26,8 @@ var CPU65C02op = new Array();
 
 /*  LDA iz  */ CPU65C02op[0xB2] = function(m) { m.iz(); m.lda(); };
 
+/*  ORA iz  */ CPU65C02op[0x12] = function(m) { m.iz(); m.ora(); };
+
 /*  PHX     */ CPU65C02op[0xDA] = function(m) { m.imp(); m.phx(); };
 /*  PHY     */ CPU65C02op[0x5A] = function(m) { m.imp(); m.phy(); };
 
@@ -50,14 +52,47 @@ var CPU65C02op = new Array();
 ////////////////////////////////////////////////////////////////////
 // illegal opcodes perform a NOP.
 //
-/* *KIL     */ CPU65C02op[0x02] = function(m) { m.imp(); m.nop(); };
+// The following table (http://6502.org/tutorials/65c02opcodes.html)
+// summarizes the unused opcodes of the 65C02.
+// The first number is the size in bytes,
+// and the second number is the number of cycles taken.
+// After the second number, a lower case letter may be present;
+// when it is present it indicates a footnote.
+
+//     02     03     04     07     0B     0C     0F
+//     -----  -----  -----  -----  -----  -----  -----
+// 00  2 2    1 1    . .    1 1 a  1 1    . .    1 1 b
+// 10  . .    1 1    . .    1 1 a  1 1    . .    1 1 b
+// 20  2 2    1 1    . .    1 1 a  1 1    . .    1 1 b
+// 30  . .    1 1    . .    1 1 a  1 1    . .    1 1 b
+// 40  2 2    1 1    2 3    1 1 a  1 1    . .    1 1 b
+// 50  . .    1 1    2 4    1 1 a  1 1    3 8    1 1 b
+// 60  2 2    1 1    . .    1 1 a  1 1    . .    1 1 b
+// 70  . .    1 1    . .    1 1 a  1 1    . .    1 1 b
+// 80  2 2    1 1    . .    1 1 c  1 1    . .    1 1 d
+// 90  . .    1 1    . .    1 1 c  1 1    . .    1 1 d
+// A0  . .    1 1    . .    1 1 c  1 1    . .    1 1 d
+// B0  . .    1 1    . .    1 1 c  1 1    . .    1 1 d
+// C0  2 2    1 1    . .    1 1 c  1 1 e  . .    1 1 d
+// D0  . .    1 1    2 4    1 1 c  1 1 f  3 4    1 1 d
+// E0  2 2    1 1    . .    1 1 c  1 1    . .    1 1 d
+// F0  . .    1 1    2 4    1 1 c  1 1    3 4    1 1 d
+//
+// a) RMB instruction on Rockwell 65C02 and WDC 65C02
+// b) BBR instruction on Rockwell 65C02 and WDC 65C02
+// c) SMB instruction on Rockwell 65C02 and WDC 65C02
+// d) BBS instruction on Rockwell 65C02 and WDC 65C02
+// e) WAI instruction on WDC 65C02
+// f) STP instruction on WDC 65C02
+
+/* *KIL     */ CPU65C02op[0x02] = function(m) { m.imm(); m.nop(); };
 /* *SLO izx */ CPU65C02op[0x03] = function(m) { m.imp(); m.nop(); };
 /* *NOP zp  */ //CPU65C02op[0x04] = function(m) { m.imp(); m.nop(); };
 /* *SLO zp  */ CPU65C02op[0x07] = function(m) { m.imp(); m.nop(); };
 /* *ANC imm */ CPU65C02op[0x0B] = function(m) { m.imp(); m.nop(); };
 /* *NOP abs */ //CPU6502op[0x0C] = function(m) { m.abs(); m.nop(); };
 /* *SLO abs */ CPU65C02op[0x0F] = function(m) { m.imp(); m.nop(); };
-/* *KIL     */ CPU65C02op[0x12] = function(m) { m.imp(); m.nop(); };
+/* *KIL     */ //CPU65C02op[0x12] = function(m) { m.imp(); m.nop(); };
 /* *SLO izy */ CPU65C02op[0x13] = function(m) { m.imp(); m.nop(); };
 /* *NOP zpx */ //CPU6502op[0x14] = function(m) { m.zpx(); m.nop(); };
 /* *SLO zpx */ CPU65C02op[0x17] = function(m) { m.imp(); m.nop(); };
@@ -65,7 +100,7 @@ var CPU65C02op = new Array();
 /* *SLO aby */ CPU65C02op[0x1B] = function(m) { m.imp(); m.nop(); };
 /* *NOP abx */ //CPU6502op[0x1C] = function(m) { m.abx(); m.nop(); };
 /* *SLO abx */ CPU65C02op[0x1F] = function(m) { m.imp(); m.nop(); };
-/* *KIL     */ CPU65C02op[0x22] = function(m) { m.imp(); m.nop(); };
+/* *KIL     */ CPU65C02op[0x22] = function(m) { m.imm(); m.nop(); };
 /* *RLA izx */ CPU65C02op[0x23] = function(m) { m.imp(); m.nop(); };
 /* *RLA zp  */ CPU65C02op[0x27] = function(m) { m.imp(); m.nop(); };
 /* *ANC imm */ CPU65C02op[0x2B] = function(m) { m.imp(); m.nop(); };
@@ -78,21 +113,21 @@ var CPU65C02op = new Array();
 /* *RLA aby */ CPU65C02op[0x3B] = function(m) { m.imp(); m.nop(); };
 /* *NOP abx */ //CPU6502op[0x3C] = function(m) { m.abx(); m.nop(); };
 /* *RLA abx */ CPU65C02op[0x3F] = function(m) { m.imp(); m.nop(); };
-/* *KIL     */ CPU65C02op[0x42] = function(m) { m.imp(); m.nop(); };
+/* *KIL     */ CPU65C02op[0x42] = function(m) { m.imm(); m.nop(); };
 /* *SRE izx */ CPU65C02op[0x43] = function(m) { m.imp(); m.nop(); };
-/* *NOP zp  */ CPU65C02op[0x44] = function(m) { m.imp(); m.nop(); };
+/* *NOP zp  */ CPU65C02op[0x44] = function(m) { m.imm(); m.nop(); };
 /* *SRE zp  */ CPU65C02op[0x47] = function(m) { m.imp(); m.nop(); };
 /* *ALR imm */ CPU65C02op[0x4B] = function(m) { m.imp(); m.nop(); };
 /* *SRE abs */ CPU65C02op[0x4F] = function(m) { m.imp(); m.nop(); };
 /* *KIL     */ //CPU6502op[0x52] = function(m) { m.imp(); m.kil(); };
 /* *SRE izy */ CPU65C02op[0x53] = function(m) { m.imp(); m.nop(); };
-/* *NOP zpx */ CPU65C02op[0x54] = function(m) { m.imp(); m.nop(); };
+/* *NOP zpx */ CPU65C02op[0x54] = function(m) { m.imm(); m.nop(); };
 /* *SRE zpx */ CPU65C02op[0x57] = function(m) { m.imp(); m.nop(); };
 /* *NOP     */ //CPU65C02op[0x5A] = function(m) { m.imp(); m.nop(); };
 /* *SRE aby */ //CPU6502op[0x5B] = function(m) { m.aby(); m.sre(); m.rmw(); };
-/* *NOP abx */ CPU65C02op[0x5C] = function(m) { m.imp(); m.nop(); };
+/* *NOP abx */ CPU65C02op[0x5C] = function(m) { m.abs(); m.nop(); };
 /* *SRE abx */ CPU65C02op[0x5F] = function(m) { m.imp(); m.nop(); };
-/* *KIL     */ CPU65C02op[0x62] = function(m) { m.imp(); m.nop(); };
+/* *KIL     */ CPU65C02op[0x62] = function(m) { m.imm(); m.nop(); };
 /* *RRA izx */ CPU65C02op[0x63] = function(m) { m.imp(); m.nop(); };
 /* *NOP zp  */ //CPU6502op[0x64] = function(m) { m.zp(); m.nop(); };
 /* *RRA zp  */ CPU65C02op[0x67] = function(m) { m.imp(); m.nop(); };
@@ -107,7 +142,7 @@ var CPU65C02op = new Array();
 /* *NOP abx */ //CPU6502op[0x7C] = function(m) { m.abx(); m.nop(); };
 /* *RRA abx */ CPU65C02op[0x7F] = function(m) { m.imp(); m.nop(); };
 /* *NOP imm */ //CPU6502op[0x80] = function(m) { m.imm(); m.nop(); };
-/* *NOP imm */ CPU65C02op[0x82] = function(m) { m.imp(); m.nop(); };
+/* *NOP imm */ CPU65C02op[0x82] = function(m) { m.imm(); m.nop(); };
 /* *SAX izx */ CPU65C02op[0x83] = function(m) { m.imp(); m.nop(); };
 /* *SAX zp  */ CPU65C02op[0x87] = function(m) { m.imp(); m.nop(); };
 /* *NOP imm */ //CPU6502op[0x89] = function(m) { m.imm(); m.nop(); };
@@ -129,31 +164,31 @@ var CPU65C02op = new Array();
 /* *LAX zpy */ CPU65C02op[0xB7] = function(m) { m.imp(); m.nop(); };
 /* *LAS aby */ CPU65C02op[0xBB] = function(m) { m.imp(); m.nop(); };
 /* *LAX aby */ CPU65C02op[0xBF] = function(m) { m.imp(); m.nop(); };
-/* *NOP imm */ CPU65C02op[0xC2] = function(m) { m.imp(); m.nop(); };
+/* *NOP imm */ CPU65C02op[0xC2] = function(m) { m.imm(); m.nop(); };
 /* *DCP izx */ CPU65C02op[0xC3] = function(m) { m.imp(); m.nop(); };
 /* *DCP zp  */ CPU65C02op[0xC7] = function(m) { m.imp(); m.nop(); };
 /* *AXS imm */ CPU65C02op[0xCB] = function(m) { m.imp(); m.nop(); };
 /* *DCP abs */ CPU65C02op[0xCF] = function(m) { m.imp(); m.nop(); };
 /* *KIL     */ //CPU6502op[0xD2] = function(m) { m.imp(); m.kil(); };
 /* *DCP izy */ CPU65C02op[0xD3] = function(m) { m.imp(); m.nop(); };
-/* *NOP zpx */ CPU65C02op[0xD4] = function(m) { m.imp(); m.nop(); };
+/* *NOP zpx */ CPU65C02op[0xD4] = function(m) { m.imm(); m.nop(); };
 /* *DCP zpx */ CPU65C02op[0xD7] = function(m) { m.imp(); m.nop(); };
 /* *NOP     */ //CPU6502op[0xDA] = function(m) { m.imp(); m.nop(); };
 /* *STP     */ CPU65C02op[0xDB] = function(m) { m.imp(); m.nop(); };
-/* *NOP abx */ CPU65C02op[0xDC] = function(m) { m.imp(); m.nop(); };
+/* *NOP abx */ CPU65C02op[0xDC] = function(m) { m.abs(); m.nop(); };
 /* *DCP abx */ CPU65C02op[0xDF] = function(m) { m.imp(); m.nop(); };
-/* *NOP imm */ CPU65C02op[0xE2] = function(m) { m.imp(); m.nop(); };
+/* *NOP imm */ CPU65C02op[0xE2] = function(m) { m.imm(); m.nop(); };
 /* *ISC izx */ CPU65C02op[0xE3] = function(m) { m.imp(); m.nop(); };
 /* *ISC zp  */ CPU65C02op[0xE7] = function(m) { m.imp(); m.nop(); };
 /* *SBC imm */ CPU65C02op[0xEB] = function(m) { m.imp(); m.nop(); };
 /* *ISC abs */ CPU65C02op[0xEF] = function(m) { m.imp(); m.nop(); };
 /* *KIL     */ //CPU6502op[0xF2] = function(m) { m.imp(); m.kil(); };
 /* *ISC izy */ CPU65C02op[0xF3] = function(m) { m.imp(); m.nop(); };
-/* *NOP zpx */ CPU65C02op[0xF4] = function(m) { m.imp(); m.nop(); };
+/* *NOP zpx */ CPU65C02op[0xF4] = function(m) { m.imm(); m.nop(); };
 /* *ISC zpx */ CPU65C02op[0xF7] = function(m) { m.imp(); m.nop(); };
 /* *NOP     */ //CPU6502op[0xFA] = function(m) { m.imp(); m.nop(); };
 /* *ISC aby */ CPU65C02op[0xFB] = function(m) { m.imp(); m.nop(); };
-/* *NOP abx */ CPU65C02op[0xFC] = function(m) { m.imp(); m.nop(); };
+/* *NOP abx */ CPU65C02op[0xFC] = function(m) { m.abs(); m.nop(); };
 /* *ISC abx */ CPU65C02op[0xFF] = function(m) { m.imp(); m.nop(); };
 
 module.exports = CPU65C02op;
