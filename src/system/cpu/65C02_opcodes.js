@@ -47,7 +47,9 @@ var CPU65C02op = new Array();
 /*  TSB abs */ CPU65C02op[0x0C] = function(m) { m.abs(); m.tsb(); };
 /*  TSB zp  */ CPU65C02op[0x04] = function(m) { m.zp(); m.tsb(); };
 
+////////////////////////////////////////////////////////////////////
 // illegal opcodes perform a NOP.
+//
 /* *KIL     */ CPU65C02op[0x02] = function(m) { m.imp(); m.nop(); };
 /* *SLO izx */ CPU65C02op[0x03] = function(m) { m.imp(); m.nop(); };
 /* *NOP zp  */ //CPU65C02op[0x04] = function(m) { m.imp(); m.nop(); };
@@ -86,7 +88,7 @@ var CPU65C02op = new Array();
 /* *SRE izy */ CPU65C02op[0x53] = function(m) { m.imp(); m.nop(); };
 /* *NOP zpx */ CPU65C02op[0x54] = function(m) { m.imp(); m.nop(); };
 /* *SRE zpx */ CPU65C02op[0x57] = function(m) { m.imp(); m.nop(); };
-/* *NOP     */ CPU65C02op[0x5A] = function(m) { m.imp(); m.nop(); };
+/* *NOP     */ //CPU65C02op[0x5A] = function(m) { m.imp(); m.nop(); };
 /* *SRE aby */ //CPU6502op[0x5B] = function(m) { m.aby(); m.sre(); m.rmw(); };
 /* *NOP abx */ CPU65C02op[0x5C] = function(m) { m.imp(); m.nop(); };
 /* *SRE abx */ CPU65C02op[0x5F] = function(m) { m.imp(); m.nop(); };
