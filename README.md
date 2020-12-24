@@ -106,8 +106,8 @@ This package includes open source from other developers and I would like to than
 * Tony Landi - Acme Cross Assembler (C64): I started with the basic syntax definition for ACME from your package. Thanks for starting that!
 
 ## ToDo
-- [ ] Implement 65C02 variant
-- [ ] Implement 65C802 variant
+- [X] Implement 65C02 variant
+- [ ] Implement 65C816 variant
 - [ ] add [v6502r](https://github.com/floooh/v6502r) as emulation option
 ## Ideas Taken From
 * Captain JiNX - VSCode KickAss (C64)
@@ -120,3 +120,6 @@ This package includes open source from other developers and I would like to than
 * VICE, the Versatile Commodore Emulator: http://vice-emu.sourceforge.net/
 * C64 65XE Debugger: https://sourceforge.net/projects/c64-debugger/
 * Cycle-accurate 6502 emulator in Javascript: https://github.com/Torlus/6502.js
+* set of functional tests for the 6502/65C02 type processors: https://github.com/Klaus2m5/6502_65C02_functional_tests
+* ideas for system-level support : https://github.com/LowLevelJavaScript/16-Bit-Virtual-Machine
+* nice extension documentation ideas: https://github.com/prb28/vscode-amiga-assembly
