@@ -1,7 +1,7 @@
 {
 	"name": "vc65x",
 	"displayName": "vc65x",
-	"description": "VC65X - The 65X Development Environment",
+	"description": "VC65X - A 65XX Development Environment",
 	"version": "0.0.3",
 	"preview": true,
 	"publisher": "bissonex",
