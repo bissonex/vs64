@@ -17,10 +17,10 @@ jobs:
       - name: fetch all history and tags from all branches for gitversion
         run: git fetch --prune --unshallow
 
-      - name: install gitversion tool
-        uses: gittools/actions/gitversion/setup@v0.9
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v0.9.7
         with:
-            versionSpec: '5.1.x'
+          versionSpec: '5.x'
 
       - name: execute gitversion
         id: gitversion # step id used as reference for output values
