@@ -28,11 +28,11 @@ jobs:
 
       - name: print gitversion
         run: |
-          # echo "Major: ${{ steps.gitversion.outputs.major }}"
-          # echo "Minor: ${{ steps.gitversion.outputs.minor }}"
-          # echo "Patch: ${{ steps.gitversion.outputs.patch }}"
-          # echo "MajorMinorPatch: ${{ steps.gitversion.outputs.majorMinorPatch }}"
-          # echo "SemVer: ${{ steps.gitversion.outputs.semVer }}"
+          echo "Major: ${{ steps.gitversion.outputs.major }}"
+          echo "Minor: ${{ steps.gitversion.outputs.minor }}"
+          echo "Patch: ${{ steps.gitversion.outputs.patch }}"
+          echo "MajorMinorPatch: ${{ steps.gitversion.outputs.majorMinorPatch }}"
+          echo "SemVer: ${{ steps.gitversion.outputs.semVer }}"
 
       - name: setup node
         uses: actions/setup-node@v2
@@ -40,7 +40,7 @@ jobs:
           node-version: '14'
 
       - name: clean install dependencies
-        run: npm ci
+        run: yarn ci
 
       - name: update metadata in package.json
         uses: onlyutkarsh/patch-files-action@v1.0.1
@@ -59,11 +59,11 @@ jobs:
           VERSION: "${{ steps.gitversion.outputs.semVer }}"
 
       - name: compile and create vsix
-        run: npm run package
+        run: yarn run package
 
       - name: print vsix path
         run: |
-          # echo "VSIX Path: ${{ env.vsix_path }}"
+          echo "VSIX Path: ${{ env.vsix_path }}"
 
       - name: upload vsix as artifact
         uses: actions/upload-artifact@v2
