@@ -1,7 +1,7 @@
-var CPU6502 = require('./cpu');
+var MOS6502 = require('./MOS6502_cpu');
 var R65C02op = require('./R65C02_opcodes');
 
-class R65C02 extends CPU6502{
+class R65C02 extends MOS6502{
 
     constructor(memory) {
         super(memory);
