@@ -60,7 +60,6 @@ jobs:
 
       - name: compile and create vsix
         run: |
-          npm install -g vsce
           yarn run package
 
       - name: print vsix path
