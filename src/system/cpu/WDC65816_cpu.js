@@ -1,12 +1,12 @@
-var CPU65C02 = require('./65C02_cpu');
-var CPU65816op = require('./65816_opcodes');
+var WDC65C02 = require('./WDC65C02_cpu');
+var WDC65816op = require('./WDC65816_opcodes');
 
-class CPU65816 extends CPU65C02{
+class WDC65816 extends WDC65C02{
 
     constructor(memory) {
         super(memory);
 
-        for (const [i, v] of CPU65816op.entries()) {
+        for (const [i, v] of WDC65816op.entries()) {
             if (typeof v !== 'undefined') {
                 this.opcodes.splice(i, 1, v);
             }
@@ -32,4 +32,4 @@ class CPU65816 extends CPU65C02{
 // CPU instantiation
 ////////////////////////////////////////////////////////////////////////////////
 
-module.exports = CPU65816;
+module.exports = WDC65816;

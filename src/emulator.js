@@ -21,8 +21,9 @@ var Constants = require('src/constants');
 const createMemory = require('./system/create-memory');
 
 const CPU6502 = require('./system/cpu/cpu');
-const CPU65C02 = require('./system/cpu/65C02_cpu');
-const CPU65816 = require('./system/cpu/65816_cpu');
+const R65C02 = require('./system/cpu/R65C02_cpu');
+const WDC65C02 = require('./system/cpu/WDC65C02_cpu');
+const WDC65816 = require('./system/cpu/WDC65816_cpu');
 
 const MemoryMapper = require('./system/memory-mapper.js');
 const createScreenDevice = require('./system/peripherals/screen-device');
@@ -60,24 +61,32 @@ class Emulator {
 
     init(forcedCpuArchitecture) {
 
-        if (null != forcedCpuArchitecture) {
-            switch (forcedCpuArchitecture) {
-                case "6502":
-                    this._cpu = new CPU6502(this._MM);
-                    break;
+        if (null == this._cpu) {
+            if (null != forcedCpuArchitecture) {
+                switch (forcedCpuArchitecture) {
+                    case "6502":
+                        this._cpu = new CPU6502(this._MM);
+                        break;
 
-                case "65C02":
-                    this._cpu = new CPU65C02(this._MM);
+                    case "R65C02":
+                        this._cpu = new R65C02(this._MM);
+                        break;
 
-                case "65816":
-                    this._cpu = new CPU65816(this._MM);
+                    case "WDC65C02":
+                        this._cpu = new WDC65C02(this._MM);
+                        break;
 
-                default:
-                    break;
+                    case "WDC65816":
+                        this._cpu = new WDC65816(this._MM);
+                        break;
+
+                    default:
+                        break;
+                }
+
+            } else {
+                this._cpu = new CPU6502(this._MM);
             }
-
-        } else {
-            this._cpu = new CPU6502(this._MM);
         }
         this._running = false;
         this._prg = null;
