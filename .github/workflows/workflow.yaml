@@ -48,7 +48,7 @@ jobs:
           files: '${{github.workspace}}/package.json'
           patch-syntax: |
             = /version => "${{ steps.gitversion.outputs.semVer }}"
-            = /displayName => "vc65x"
+            = /displayName => "VC65X"
             = /description => "VC65X - A 65XX Development Environment."
 
       - name: add version in CHANGELOG.md
@@ -64,10 +64,10 @@ jobs:
 
       - name: print vsix path
         run: |
-          echo "VSIX Path: ${{ env.vsix_path }}"
+          echo "VC65X Path: ${{ env.vsix_path }}"
 
       - name: upload vsix as artifact
         uses: actions/upload-artifact@v2
         with:
-          name: vsix-viewer-${{steps.gitversion.outputs.semVer}}.vsix
-          path: ${{github.workspace}}/vsix-viewer-${{steps.gitversion.outputs.semVer}}.vsix
+          name: vc65x-${{steps.gitversion.outputs.semVer}}.vsix
+          path: ${{github.workspace}}/vc65x-${{steps.gitversion.outputs.semVer}}.vsix
