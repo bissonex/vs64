@@ -9,7 +9,7 @@ on:
 jobs:
   cicd:
     name: cicd
-    runs-on: windows-latest
+    runs-on: ubuntu-18.04
     steps:
       - name: checkout repo
         uses: actions/checkout@v2
@@ -61,7 +61,6 @@ jobs:
       - name: compile and create vsix
         run: |
           yarn global add vsce
-          yarn install
           vsce package
 
       - name: print vsix path
