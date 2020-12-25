@@ -219,8 +219,8 @@
 							"request": "launch",
 							"name": "Debug VC65X",
 							"binary": "",
-							"base":"$5000",
-							"pc":"$5000",
+							"base": "$5000",
+							"pc": "$5000",
 							"arch": "6502"
 						}
 					}
