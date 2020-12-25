@@ -20,10 +20,13 @@ const fs = require('fs');
 var Constants = require('src/constants');
 const createMemory = require('./system/create-memory');
 
-const CPU6502 = require('./system/cpu/cpu');
+// MOS Technology, Inc.
+const MOS6502 = require('./system/cpu/MOS6502_cpu');
+// Rockwell Semiconductor Systems, Inc
 const R65C02 = require('./system/cpu/R65C02_cpu');
-const WDC65C02 = require('./system/cpu/WDC65C02_cpu');
-const WDC65816 = require('./system/cpu/WDC65816_cpu');
+// Western Design Center (WDC)
+const W65C02S = require('./system/cpu/W65C02S_cpu');
+const W65C816S = require('./system/cpu/W65C816S_cpu');
 
 const MemoryMapper = require('./system/memory-mapper.js');
 const createScreenDevice = require('./system/peripherals/screen-device');
@@ -65,19 +68,20 @@ class Emulator {
             if (null != forcedCpuArchitecture) {
                 switch (forcedCpuArchitecture) {
                     case "6502":
-                        this._cpu = new CPU6502(this._MM);
+                    case "MOS6502":
+                        this._cpu = new MOS6502(this._MM);
                         break;
 
                     case "R65C02":
                         this._cpu = new R65C02(this._MM);
                         break;
 
-                    case "WDC65C02":
-                        this._cpu = new WDC65C02(this._MM);
+                    case "W65C02S":
+                        this._cpu = new W65C02S(this._MM);
                         break;
 
-                    case "WDC65816":
-                        this._cpu = new WDC65816(this._MM);
+                    case "W65C816S":
+                        this._cpu = new W65C816S(this._MM);
                         break;
 
                     default:
@@ -85,7 +89,7 @@ class Emulator {
                 }
 
             } else {
-                this._cpu = new CPU6502(this._MM);
+                this._cpu = new MOS6502(this._MM);
             }
         }
         this._running = false;
