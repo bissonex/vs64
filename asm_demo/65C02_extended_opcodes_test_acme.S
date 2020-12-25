@@ -5721,15 +5721,15 @@ tdad7   CPX     #$0E
 @L24EA  BNE     @L24EA
         LDA     #$F0
         STA     test_case
-;  S U C C E S S ************************************************       
-;  -------------    
+;  S U C C E S S ************************************************
+;  -------------
 @L24F1  JMP     @L24F1     ;test passed, no errors
 
-;  S U C C E S S ************************************************       
-;  -------------    
+;  S U C C E S S ************************************************
+;  -------------
         JMP     start      ;run again
 
-; core subroutine of the decimal add/subtract test                        
+; core subroutine of the decimal add/subtract test
 ; *** WARNING - tests documented behavior only! ***
 ;   only valid BCD operands are tested, V flag is ignored
 ; iterates through all valid combinations of operands and carry input
