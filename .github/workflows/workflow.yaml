@@ -59,9 +59,7 @@ jobs:
           VERSION: "${{ steps.gitversion.outputs.semVer }}"
 
       - name: compile and create vsix
-        run: |
-          yarn install
-          vsce package
+        run: build_vsix_package.bat
 
       - name: print vsix path
         run: |
