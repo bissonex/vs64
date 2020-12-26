@@ -272,6 +272,11 @@ class DebugSession extends debug.LoggingDebugSession {
         response.body.supportsRestartRequest = true;
         response.body.supportsEvaluateForHovers = true;
         response.body.supportsLogPoints = true;
+        response.body.supportsSetVariable = true;
+
+        response.body.supportsHitConditionalBreakpoints = false;
+        response.body.supportsFunctionBreakpoints = false;
+        response.body.supportsConditionalBreakpoints = false;
 
 		this.sendResponse(response);
 
@@ -509,6 +514,35 @@ class DebugSession extends debug.LoggingDebugSession {
         this.sendResponse(response);
     }
 
+    setVariableRequest(response, args) {
+        var value;
+        var emu = this._emulator;
+
+        args = args||{};
+
+        switch (args.name) {
+            case "(accumulator) A":
+                emu._cpu.A = parseInt(args.value, 16) & 0xFF;
+                value = this.formatByte(emu._cpu.A);
+                break;
+
+            default:
+                break;
+        }
+
+        if (null != value) {
+            response.body = {
+                value: value,
+                variablesReference: 0
+            };
+        } else {
+            response.success = false;
+            response.message = "Unable to assign value";
+        }
+
+        this.sendResponse(response);
+    }
+
     variablesRequest(response, args) {
 
         args = args||{};
@@ -649,7 +683,7 @@ class DebugSession extends debug.LoggingDebugSession {
                 variables = [];
 
                 for (let i=0; i<count; i++) {
-                    var addr = 0x0000;
+                    var addr = 0x00200;
                     var value = emu.read(addr+i);
                     variables.push( {
                         name: "$" + Utils.fmt((addr+i).toString(16), 4),
