@@ -1,3 +1,5 @@
+const vscode = require('vscode');
+
 const eraseScreen = () => {
   process.stdout.write('\x1b[2J');
 }
@@ -21,7 +23,8 @@ const createUartDevice = () => {
     setUint8: (address, data) => {
       const characterValue = data;
       const character = String.fromCharCode(characterValue);
-      process.stdout.write(character);
+      //process.stdout.write(character);
+      vscode.debug.activeDebugConsole.append(character);
     },
     setUint16: (address, data) => {
     }
