@@ -1,8 +1,8 @@
 {
 	"name": "vc65x",
-	"displayName": "vc65x",
+	"displayName": "VC65X",
 	"description": "VC65X - A 65XX Development Environment",
-	"version": "0.0.3",
+	"version": "0.0.0",
 	"preview": true,
 	"publisher": "bissonex",
 	"license": "GPL-3.0",
@@ -87,8 +87,7 @@
 					".S",
 					".asm",
 					".acme",
-					".a",
-					".h"
+					".a"
 				],
 				"configuration": "./language/asm.language.json"
 			}
@@ -207,7 +206,8 @@
 							"arch": {
 								"type": "string",
 								"description": "CPU architecture",
-								"default": "6502"
+								"default": "MOS6502",
+								"enum": ["MOS6502", "R65C02", "W65C02S", "W65C816S"]
 							}
 						}
 					}
@@ -224,7 +224,7 @@
 							"binary": "",
 							"base": "$5000",
 							"pc": "$5000",
-							"arch": "6502"
+							"arch": "MOS6502"
 						}
 					}
 				],

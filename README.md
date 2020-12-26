@@ -1,5 +1,5 @@
 # VC65X
-6502, 6510 (including illegal opcodes), 65c02 and 65816 Development Environment for Visual Studio Code
+6502, 65C02 and 65C816 Development Environment for Visual Studio Code
 
 ![re](images/screenshot1.png)
 ## Features
@@ -32,7 +32,7 @@ If compilation fails, the ACME outputs are shown in the diagnostics view.
 
 The VC65X extension comes with a built-in 6502 CPU emulator that allows very fast edit-build-run cycles. It purely executes 6502 machine code as fast as possible - and integrates nicely to the Visual Studio Code debugger interface.
 
-An active 6502 debugging session allows you to:
+An active 65XX debugging session allows you to:
 
 - define breakpoints
 - inspect registers, addresses, values
@@ -62,7 +62,7 @@ Enable background build after source changes.
 
 ## Debugger Launch Configuration
 
-In order to run a compiled 65X program (`.bin`) using the embedded 6502 CPU emulator, you have to create a launch configuration. Here is a small example:
+In order to run a compiled 65XX program (`.bin`) using the embedded 6502 CPU emulator, you have to create a launch configuration. Here is a small example:
 
     {
         "version": "0.2.0",
@@ -73,7 +73,7 @@ In order to run a compiled 65X program (`.bin`) using the embedded 6502 CPU emul
                 "name": "Launch Program",
                 "pc": "0x0100",
                 "base": "0x0000",
-                "arch":"6502",
+                "arch":"MOS6502",
                 "binary": "C:\\Work\\vc65x\\demo1\\.cache\\src\\test.bin"
             }
         ]
@@ -91,7 +91,7 @@ Always use "launch" here.
 
 Any name you want to use is fine.
 
-> `binary`: Path to a compiled 65X program
+> `binary`: Path to a compiled 65XX program
 
 The default build output path is ".cache" within the workspace root folder.
 
@@ -105,7 +105,7 @@ A 16-bit address in decimal or $hexadecimal form.
 
 > `arch`: Optional parameter to overwrite the CPU architecture of the emulator.
 
-Select from "6502", "65C02" or "65816".
+Select from "MOS6502", "R65C02", "W65C02S" or "W65C816S".
 
 ## Open Source
 
