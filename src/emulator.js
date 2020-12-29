@@ -1,5 +1,5 @@
 //
-// Emulator MOS 6502 System
+// Emulator MCS6502 System
 //
 
 //const path = require('path');
@@ -21,7 +21,7 @@ var Constants = require('src/constants');
 const createMemory = require('./system/create-memory');
 
 // MOS Technology, Inc.
-const MOS6502 = require('./system/cpu/MOS6502_cpu');
+const MCS6502 = require('./system/cpu/MCS6502_cpu');
 // Rockwell Semiconductor Systems, Inc
 const R65C02 = require('./system/cpu/R65C02_cpu');
 // Western Design Center (WDC)
@@ -68,8 +68,8 @@ class Emulator {
             if (null != forcedCpuArchitecture) {
                 switch (forcedCpuArchitecture) {
                     case "6502":
-                    case "MOS6502":
-                        this._cpu = new MOS6502(this._MM);
+                    case "MCS6502":
+                        this._cpu = new MCS6502(this._MM);
                         break;
 
                     case "R65C02":
@@ -89,7 +89,7 @@ class Emulator {
                 }
 
             } else {
-                this._cpu = new MOS6502(this._MM);
+                this._cpu = new MCS6502(this._MM);
             }
         }
         this._running = false;

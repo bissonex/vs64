@@ -450,7 +450,7 @@ class DebugSession extends debug.LoggingDebugSession {
     threadsRequest(response, args) {
         response.body = {
             threads: [
-                new debug.Thread(Debugger.THREAD_ID, "MOS6502 Main")
+                new debug.Thread(Debugger.THREAD_ID, "MCS6502 Main")
             ]
         };
 
@@ -524,6 +524,26 @@ class DebugSession extends debug.LoggingDebugSession {
             case "(accumulator) A":
                 emu._cpu.A = parseInt(args.value, 16) & 0xFF;
                 value = this.formatByte(emu._cpu.A);
+                break;
+
+            case "(register) X":
+                emu._cpu.X = parseInt(args.value, 16) & 0xFF;
+                value = this.formatByte(emu._cpu.X);
+                break;
+
+            case "(register) Y":
+                emu._cpu.Y = parseInt(args.value, 16) & 0xFF;
+                value = this.formatByte(emu._cpu.Y);
+                break;
+
+            case "(stack pointer) SP":
+                emu._cpu.SP = parseInt(args.value, 16) & 0xFF;
+                value = this.formatByte(emu._cpu.SP);
+                break;
+
+            case "(program counter) PC":
+                emu._cpu.PC = parseInt(args.value, 16) & 0xFFFF;
+                value = this.formatAddress(emu._cpu.PC);
                 break;
 
             default:

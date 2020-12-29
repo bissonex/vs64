@@ -24,7 +24,12 @@ const createUartDevice = () => {
       const characterValue = data;
       const character = String.fromCharCode(characterValue);
       //process.stdout.write(character);
-      vscode.debug.activeDebugConsole.append(character);
+      if ('\r' === character) {
+        vscode.debug.activeDebugConsole.appendLine(character);
+      } else {
+        vscode.debug.activeDebugConsole.append(character);
+      }
+
     },
     setUint16: (address, data) => {
     }

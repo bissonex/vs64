@@ -1,6 +1,6 @@
 # Documentation
 
-## MOS 6502 assembler
+## MCS6502 assembler
 
 | Insctructions  | Description |
 |:---|:---|

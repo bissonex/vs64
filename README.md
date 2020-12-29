@@ -6,7 +6,7 @@
 
 * Syntax highlighting for ACME assembler files
 * Integration of the ACME assembler
-* Full debugging support for MOS 6502 CPU
+* Full debugging support for MCS6502 CPU
 
 ## Requirements
 
@@ -28,7 +28,7 @@ If compilation is successful, that program file can either be run/debugged with 
 
 If compilation fails, the ACME outputs are shown in the diagnostics view.
 
-### MOS 6502 CPU Emulator
+### MCS6502 CPU Emulator
 
 The VC65X extension comes with a built-in 6502 CPU emulator that allows very fast edit-build-run cycles. It purely executes 6502 machine code as fast as possible - and integrates nicely to the Visual Studio Code debugger interface.
 
@@ -73,7 +73,7 @@ In order to run a compiled 65XX program (`.bin`) using the embedded 6502 CPU emu
                 "name": "Launch Program",
                 "pc": "0x0100",
                 "base": "0x0000",
-                "arch":"MOS6502",
+                "arch":"MCS6502",
                 "binary": "C:\\Work\\vc65x\\demo1\\.cache\\src\\test.bin"
             }
         ]
@@ -105,7 +105,7 @@ A 16-bit address in decimal or $hexadecimal form.
 
 > `arch`: Optional parameter to overwrite the CPU architecture of the emulator.
 
-Select from "MOS6502", "R65C02", "W65C02S" or "W65C816S".
+Select from "MCS6502", "R65C02", "W65C02S" or "W65C816S".
 
 ## Open Source
 
