@@ -1,9 +1,9 @@
-const MOS6502op = require('./MOS6502_opcodes.js');
+const MCS6502op = require('./MCS6502_opcodes.js');
 
 /**
- * A MOS6502 processor emulator
+ * A MCS6502 processor emulator
  */
-class MOS6502 {
+class MCS6502 {
 	constructor(memory) {
 
 		this.memory = memory;
@@ -26,7 +26,7 @@ class MOS6502 {
 
 		this.tmp = 0;
 		this.addr = 0; // Temporary registers
-		this.opcodes = MOS6502op;
+		this.opcodes = MCS6502op;
 
 		this.opcode = 0; // Current opcode
 		this.cycles = 0; // Cycles counter
@@ -53,7 +53,7 @@ class MOS6502 {
 	 */
 	step() {
 		this.opcode = this.read(this.PC++);
-		return MOS6502op[this.opcode](this);
+		return MCS6502op[this.opcode](this);
 	}
 
 	/**
@@ -719,4 +719,4 @@ class MOS6502 {
 // CPU instantiation
 ////////////////////////////////////////////////////////////////////////////////
 
-module.exports = MOS6502;
+module.exports = MCS6502;

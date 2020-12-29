@@ -206,8 +206,8 @@
 							"arch": {
 								"type": "string",
 								"description": "CPU architecture",
-								"default": "MOS6502",
-								"enum": ["MOS6502", "R65C02", "W65C02S", "W65C816S"]
+								"default": "MCS6502",
+								"enum": ["MCS6502", "R65C02", "W65C02S", "W65C816S"]
 							}
 						}
 					}
@@ -224,7 +224,7 @@
 							"binary": "",
 							"base": "$5000",
 							"pc": "$5000",
-							"arch": "MOS6502"
+							"arch": "MCS6502"
 						}
 					}
 				],
