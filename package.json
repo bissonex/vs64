@@ -58,6 +58,15 @@
 		"Formatters"
 	],
 	"contributes": {
+		"views": {
+			"debug": [
+				{
+					"type": "webview",
+					"id": "vc65x.uiView",
+					"name": "65XX System Emulator"
+				}
+			]
+		},
 		"commands": [
 			{
 				"command": "vc65x.build",

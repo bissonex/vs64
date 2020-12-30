@@ -31,6 +31,8 @@ const W65C816S = require('./system/cpu/W65C816S_cpu');
 const MemoryMapper = require('./system/memory-mapper.js');
 const createScreenDevice = require('./system/peripherals/screen-device');
 const createUartDevice = require('./system/peripherals/uart');
+const createVDUDevice = require('./system/peripherals/tms9918');
+const createIOPort = require('./system/peripherals/io');
 
 function getTime() {
     var t = process.hrtime();
@@ -52,7 +54,8 @@ class Emulator {
 
         // Map 0xFF bytes of the address space to an "output device" - just stdout
         //this._MM.map(createScreenDevice(), 0x6000, 0x30ff, true);
-        this._MM.map(createUartDevice(), 0x6000, 0x60ff, true);
+        this._MM.map(createIOPort(this._session), 0xC000, 0xC100, true);
+        this._MM.map(createVDUDevice(this._session), 0xC200, 0xC201, true);
 
         this._writableBytes = new Uint8Array(this._memory.buffer);
 

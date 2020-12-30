@@ -32,6 +32,97 @@ var Debugger = require('src/debugger');
 // Extension
 //-----------------------------------------------------------------------------------------------//
 
+class EmulatorViewProvider {
+
+    constructor(_extensionUri) {
+        this._extensionUri = _extensionUri;
+    }
+
+    resolveWebviewView(webviewView, context, _token) {
+        this._view = webviewView;
+        webviewView.webview.options = {
+            // Allow scripts in the webview
+            enableScripts: true,
+            localResourceRoots: [
+                this._extensionUri
+            ]
+        };
+        webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
+        // webviewView.webview.onDidReceiveMessage(data => {
+        //     switch (data.type) {
+        //         case 'keyPressed':
+        //             {
+        //                 //vscode.window.activeTextEditor?.insertSnippet(new vscode.SnippetString(`#${data.value}`));
+        //                 this._view.webview.postMessage({ type: 'drawChar', charCode: data.value, hpos: 1, vpos: 20 });
+        //                 break;
+        //             }
+        //     }
+        // });
+    }
+
+    start() {
+        var _a, _b;
+        if (this._view) {
+            (_b = (_a = this._view).show) === null || _b === void 0 ? void 0 : _b.call(_a, true); // `show` is not implemented in 1.49 but is for 1.50 insiders
+            this._view.webview.postMessage({ type: 'startEmulation' });
+        }
+    }
+
+	// public clearColors() {
+	// 	if (this._view) {
+	// 		this._view.webview.postMessage({ type: 'clearColors' });
+	// 	}
+	// }
+
+    _getHtmlForWebview(webview) {
+        // Get the local path to main script run in the webview, then convert it to a uri we can use in the webview.
+        const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'main2.js'));
+        // Do the same for the stylesheet.
+        // const styleResetUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'reset.css'));
+        const styleVSCodeUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'vscode.css'));
+        const styleMainUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media/css', 'apple2.css'));
+        // Use a nonce to only allow a specific script to be run.
+        const nonce = getNonce();
+        return `<!DOCTYPE html>
+		<html lang="en">
+		<head>
+			<meta charset="UTF-8">
+
+			<!--
+				Use a content security policy to only allow loading images from https or from our extension directory,
+				and only allow scripts that have a specific nonce.
+			-->
+			<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
+
+			<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+			<link href="${styleVSCodeUri}" rel="stylesheet">
+			<link href="${styleMainUri}" rel="stylesheet">
+
+			<title>Emulator</title>
+		</head>
+		<body class="apple2">
+			<div class="outer">
+				<div id="display">
+					<div class="overscan">
+						<canvas id="screen" width="560" height="384"></canvas>
+					</div>
+				</div>
+				<div class="inset">
+					<div style="margin: 0 10px">
+						<div id="keyboard"></div>
+					</div>
+				</div>
+			</div>
+
+			<script type="module" nonce="${nonce}" src="${scriptUri}"></script>
+		</body>
+		</html>`;
+    }
+}
+
+EmulatorViewProvider.viewType = 'vc65x.uiView';
+
 class Extension {
 
     /**
@@ -42,6 +133,7 @@ class Extension {
         this._output = null;
         this._settings = {};
         this._debugger = null;
+        this._uiView = null;
 
         this._state = {
             assemblerProcess: null,
@@ -64,6 +156,14 @@ class Extension {
         var settings = this._settings;
         var state = this._state;
         var hasWorkspace = this.hasWorkspace();
+
+        {
+            this._uiView = new EmulatorViewProvider(context.extensionUri);
+            context.subscriptions.push(vscode.window.registerWebviewViewProvider(EmulatorViewProvider.viewType, this._uiView));
+            // context.subscriptions.push(vscode.commands.registerCommand('systemEmulator.start', () => {
+            //     provider.start();
+            // }));
+        }
 
         { // load settings
             settings.extensionPath = context.extensionPath;
@@ -700,6 +800,15 @@ function deactivate() {
         }
         resolve();
     });
+}
+
+function getNonce() {
+	let text = '';
+	const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+	for (let i = 0; i < 32; i++) {
+		text += possible.charAt(Math.floor(Math.random() * possible.length));
+	}
+	return text;
 }
 
 //-----------------------------------------------------------------------------------------------//
