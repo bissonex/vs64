@@ -7,8 +7,11 @@ var hpos = 1;
 var vpos = 1;
 var lowByte = 0;
 var highByte = 0;
+var readPtr = 0;
+var writePtr = 0;
 var isLowByte = true;
 var isLocOk = false;
+var buffer = [];
 
 const eraseScreen = () => {
   process.stdout.write('\x1b[2J');
@@ -30,12 +33,27 @@ const createVPUDevice = (session) => {
   var emulatorViewProvider = session._host._extension._uiView;
   return {
     getUint16: () => 0,
-    getUint8: (address) => 0,
+    getUint8: (address) => {
+      var temp = 0;
+      switch (address) {
+        case 0x00:
+          if (isLocOk == true) {
+            temp = buffer[readPtr];
+            isLocOk = false;
+          }
+          break;
+
+        default:
+          break;
+      }
+      return temp;
+    },
     setUint8: (address, data) => {
       switch (address) {
         case 0x00:
           charCode = data & 0x7F;
           if (isLocOk == true) {
+            buffer[writePtr] = charCode;
             var emulatorViewProvider = session._host._extension._uiView;
             emulatorViewProvider._view.webview.postMessage({ type: 'drawChar', charCode: charCode, hpos: hpos, vpos: vpos });
             isLocOk = false;
@@ -47,15 +65,17 @@ const createVPUDevice = (session) => {
             lowByte = data;
             isLowByte = false;
           } else {
+            highByte = data & 0x3F;
             if ((data & 0xC0) == 0x40) {
-              highByte = data & 0x3F;
-
-              let temp = (highByte << 8) + lowByte;
-              hpos = (temp % 40) + 1;
-              vpos = (Math.floor(temp/40)) + 1;
+              writePtr = (highByte << 8) + lowByte;
+              hpos = (writePtr % 40) + 1;
+              vpos = (Math.floor(writePtr/40)) + 1;
               if (((hpos >= 1) && (hpos <=40)) && ((vpos >= 1) && (vpos <= 24))) {
                 isLocOk = true;
               }
+            } else {
+              readPtr = (highByte << 8) + lowByte;
+              isLocOk = true;
             }
             isLowByte = true;
           }

@@ -409,17 +409,17 @@ PCADJ4  ADC     PCL
         INY
 @EXIT   RTS
 
-CHAR1   !BYTE   '#' | $80
-        !BYTE   '!' | $80
+CHAR1   !BYTE   ',' | $80
+        !BYTE   ')' | $80
+        !BYTE   ',' | $80
         !BYTE   '#' | $80
+        !BYTE   '(' | $80
         !BYTE   '$' | $80
-        !BYTE   '*' | $80
-        !BYTE   '%' | $80
 CHAR2   !BYTE   'Y' | $80
         !BYTE   $00
         !BYTE   'X' | $80
-        !BYTE   '%' | $80
-        !BYTE   '%' | $80
+        !BYTE   '$' | $80
+        !BYTE   '$' | $80
         !BYTE   $00
 ADINDEX !HEX    3344BB00CA54BB10
         !HEX    0044BB00CA55BB11
@@ -1238,7 +1238,7 @@ SAV1    STX     XREG       ;  FOR DEBUG SOFTWARE
 
 MON     CLD                ;MUST SET HEX MODE!
         JSR     BELL       ;FWEEPER
-MONZ    LDA     #')' | $80 ;PROMPT FOR MONITOR
+MONZ    LDA     #'a' | $80 ;PROMPT FOR MONITOR
         STA     PROMPT
         JSR     GETLNZ     ;READ A LINE OF INPUT
         JSR     ZMODE      ;CLEAR MONITOR MODE. SCAN IDX
