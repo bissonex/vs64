@@ -1,6 +1,6 @@
 ; Target assembler: acme v0.96.4 []
 ; 6502bench SourceGen v1.7.3
-        !CPU    65C02
+        !CPU    65816
 WNDBTM  =       $23
 CH      =       $24
 CV      =       $25
@@ -50,7 +50,6 @@ SID_CTRL1 =     $C404
 SID_ATTACK =    $C405
 SID_FREQH3 =    $C40F
 SID_MAIN_VOLUME = $C418
-SERIAL_OUT =    $6000
 
 *       =       $F600
         !AS
@@ -145,20 +144,20 @@ ERR     LDY     YSAV       ;YES, UNRECOGNIZED INST.
 ERR2    TYA
         TAX
         JSR     PRBL2      ;PRINT ^ UNDER LAST READ
-        LDA     #'^'       ;CHAR TO INDICATE ERROR
+        LDA     #'^' | $80 ;CHAR TO INDICATE ERROR
         JSR     COUT       ;POSITION
 RESETZ  NOP
-NXTLINE LDA     #'"'
+NXTLINE LDA     #'"' | $80
         STA     PROMPT     ;INITIALIZE PROMPT
         JSR     GETLNZ     ;GET LINE
         JSR     ZMODE      ;INIT SCREEN STUFF
         LDA     IN         ;GET CHAR
-        CMP     #' '       ;ASCII BLANK
+        CMP     #' ' | $80 ;ASCII BLANK
         BEQ     SPACE      ;YES
         INY
-        CMP     #'X'
+        CMP     #'X' | $80
         BEQ     EXIT
-        CMP     #')'       ;ASCII '$' IN COL 1?
+        CMP     #')' | $80 ;ASCII '$' IN COL 1?
         BEQ     FAKEMON    ;YES SIMULATE MONITOR
         DEY                ;NO, BACKUP A CHAR
         JSR     GETNUM     ;GET A NUMBER
@@ -225,7 +224,7 @@ FORM7   STX     A1H        ;SAVE INDEX
 FORM8   STA     FMT
         STY     YSAV
         LDA     IN,Y       ;GET NEXT NONBLANK
-        CMP     #';'       ;';' START OF COMMENT?
+        CMP     #';' | $80 ;';' START OF COMMENT?
         BEQ     FORM9      ;YES
         CMP     #$8D       ;CARRIAGE RETURN?
         BNE     ERR4       ;NO, ERR.
@@ -355,7 +354,7 @@ PRMN2   ASL     RMNEM
         ROL
         DEY
         BNE     PRMN2
-        ADC     #'?'
+        ADC     #'?' | $80
         JSR     COUT
         DEX
         BNE     PRMN1
@@ -393,7 +392,7 @@ PRNTYX  TYA
         JMP     PRBYTE
 
 PRBLNK  LDX     #$03
-PRBL2   LDA     #' '
+PRBL2   LDA     #' ' | $80
         JSR     COUT
         DEX
         BNE     PRBL2
@@ -410,17 +409,17 @@ PCADJ4  ADC     PCL
         INY
 @EXIT   RTS
 
-CHAR1   !BYTE   '#'
-        !BYTE   '!'
-        !BYTE   '#'
-        !BYTE   '$'
-        !BYTE   '*'
-        !BYTE   '%'
-CHAR2   !BYTE   'Y'
+CHAR1   !BYTE   '#' | $80
+        !BYTE   '!' | $80
+        !BYTE   '#' | $80
+        !BYTE   '$' | $80
+        !BYTE   '*' | $80
+        !BYTE   '%' | $80
+CHAR2   !BYTE   'Y' | $80
         !BYTE   $00
-        !BYTE   'X'
-        !BYTE   '%'
-        !BYTE   '%'
+        !BYTE   'X' | $80
+        !BYTE   '%' | $80
+        !BYTE   '%' | $80
         !BYTE   $00
 ADINDEX !HEX    3344BB00CA54BB10
         !HEX    0044BB00CA55BB11
@@ -486,6 +485,7 @@ BREAK   PLP
         JMP     MON        ;GO TO MONITOR (NO PASS GO, NO $200)
 
 RESET   CLD                ;DO THIS FIRST TIME
+        JSR     SETNORM    ;
         JSR     SETVID     ;INITIALIZE GRAPHIC CONTROLLER
         JSR     HOME       ;CLEAR SCREEN
         JMP     MON        ;SHOW MONITOR PROMPT
@@ -648,12 +648,9 @@ ADVANCE INC     CH         ;INCREMENT CURSOR H INDEX
         BCS     CR         ;  YES, CR TO NEXT LINE
         RTS
 
-;VIDOUT  CMP     #$A0       ;CONTROL CHAR?
-VIDOUT  AND     #$7F
-        STA     SERIAL_OUT
-        RTS
-;        BCS     STORADV    ;  NO, OUTPUT IT
-;        CMP     #$8D       ;  CR?,
+VIDOUT  CMP     #$A0       ;CONTROL CHAR?
+        BCS     STORADV    ;  NO, OUTPUT IT
+        CMP     #$8D       ;  CR?,
         BEQ     CR         ;  YES.
         CMP     #$8A       ;LINE FEED?
         BEQ     LF         ;  IF SO, DO IT
@@ -821,23 +818,23 @@ YOP5    STA     VREG
 KEYIN   INC     RNDL       ;INCR RND NUMBER
         BNE     KEYIN2
         INC     RNDH
-KEYIN2  LDA     #$00
-        STA     PORTA
-        LDA     #$FF
-        STA     PORTB
-        LDA     #$04
-        STA     PORTA
-        LDA     #$00
-        STA     PORTB
-        STA     DDRA
-        STA     DDRB
-        LDA     #$04
-        STA     DDRA
-YOP8    LDA     DDRB
-        CMP     #$00
+KEYIN2  LDA     #$00            ; LDA #$DDR
+        STA     PORTA           ; STA CRA
+        LDA     #$FF            ; LDA #$FF
+        STA     PORTB           ; STA DDRA  all lines outputs
+        LDA     #$04            ; LDA #$PORT
+        STA     PORTA           ; STA CRA
+        LDA     #$00            ; LDA
+        STA     PORTB           ; STA PORTA set all output low
+        STA     DDRA            ; STA CRB
+        STA     DDRB            ; STA DDRB all lines inputs
+        LDA     #$04            ; LDA #$PORT
+        STA     DDRA            ; STA CRB
+YOP8    LDA     DDRB            ; LDA PORTB
+        CMP     #$FF
         BEQ     YOP8
         LDY     #$00
-SHFT1   LSR
+SHFT1   LSR                     ; SHIFT until the select row (==0) is in Carry
         BCC     END1
         INY
         BCS     SHFT1
@@ -850,16 +847,16 @@ END1    TYA
         LDA     #$40
         JSR     WAIT
         LDA     #$FF
-        STA     PORTB
-        LDA     #$00
-        STA     DDRA
+        STA     PORTB           ; STA PORTA set all output high
+        LDA     #$00            ; LDA #$DDR
+        STA     DDRA            ; STA CRB
         LDA     #$FF
-        STA     DDRB
-        LDA     #$04
-        STA     DDRA
+        STA     DDRB            ; STA DDRB all lines outputs
+        LDA     #$04            ; LDA #$PORT
+        STA     DDRA            ; STA CRB
         LDA     #$00
-        STA     DDRB
-        LDA     PORTB
+        STA     DDRB            ; STA PORTB set all output low
+        LDA     PORTB           ; LDA PORTA
         LDY     #$00
 SHFT2   LSR
         BCC     END2
@@ -962,9 +959,9 @@ XMEM    !BYTE   $B0
         !BYTE   $D5
         !BYTE   $C9
         !BYTE   $CF
-        !BYTE   $D0
+        !BYTE   $D0        ;P
         !BYTE   $DA
-        !BYTE   $CE
+        !BYTE   $CE        ;
 
 NOTCR   LDA     INVFLG
         PHA
@@ -1019,7 +1016,7 @@ PRA1    LDY     A1H        ;PRINT CR,A1 IN HEX
 PRYX2   JSR     CROUT
         JSR     PRNTYX
         LDY     #$00
-        LDA     #'-'       ;PRINT '-'
+        LDA     #'-' | $80 ;PRINT '-'
         JMP     COUT
 
 XAM8    LDA     AIL
@@ -1048,7 +1045,7 @@ XAMPM   LSR                ;DETERMINE IF MONITOR MODE IS
         EOR     #$FF       ;FROM 2'S COMPLEMENT TO SUBSTRACT
 ADD     ADC     AIL
         PHA
-        LDA     #'='       ;PRINT '=', THEN RESULT
+        LDA     #'=' | $80 ;PRINT '=', THEN RESULT
         JSR     COUT
         PLA
 PRBYTE  PHA                ;PRINT BYTE AS 2 HEX DIGITS
@@ -1145,7 +1142,11 @@ A1PCLP  LDA     AIL,X      ;YEP, SO COPY IT
         DEX
         BPL     A1PCLP
 A1PCRTS RTS
-
+SETINV  LDY     #$3F
+        BNE     SETIFLG
+SETNORM LDY     #$FF
+SETIFLG STY     INVFLG
+        RTS
 GO      JSR     A1PC       ;ADDR TO PC IF SPECIFIED
         JSR     RESTORE    ;RESTORE FAKE REGISTERS
         JMP     (PCL)      ;AND GO!
@@ -1237,7 +1238,7 @@ SAV1    STX     XREG       ;  FOR DEBUG SOFTWARE
 
 MON     CLD                ;MUST SET HEX MODE!
         JSR     BELL       ;FWEEPER
-MONZ    LDA     #')'       ;PROMPT FOR MONITOR
+MONZ    LDA     #')' | $80 ;PROMPT FOR MONITOR
         STA     PROMPT
         JSR     GETLNZ     ;READ A LINE OF INPUT
         JSR     ZMODE      ;CLEAR MONITOR MODE. SCAN IDX
@@ -1329,18 +1330,7 @@ SUBTBL  !BYTE   <REGZ-1    ;CTRL-E
         !BYTE   $00
         !BYTE   $00
         !BYTE   $00
-        !BYTE   $00
-        !BYTE   $00
-        !BYTE   $00
-        !BYTE   $00
-        !BYTE   $00
-        !BYTE   $00
-        !BYTE   $00
-        !BYTE   $00
-        !BYTE   $00
-        !BYTE   $00
-        !BYTE   $00
-        !BYTE   $00
+
         !WORD   $0000      ;COP VECTOR
         !WORD   IRQ        ;BRK VECTOR
         !WORD   $0000      ;ABORT VECTOR
