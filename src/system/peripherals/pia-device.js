@@ -89,7 +89,7 @@ keyboard[0x5A] = [0x00, 0x07];				//	Z
 // keyboard[0x5F] = [0x00, 0x01];				//	_
 // keyboard[0x60] = [0x00, 0x01];				//	`
 
-const createIOPort = (session) => {
+const createPIADevice = (session) => {
   // var emulatorViewProvider = session._host._extension._uiView;
 
   // emulatorViewProvider.webview.onDidReceiveMessage(data => {
@@ -170,4 +170,4 @@ const createIOPort = (session) => {
   }
 };
 
-module.exports = createIOPort;
+module.exports = createPIADevice;

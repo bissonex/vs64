@@ -254,7 +254,7 @@ class DebugSession extends debug.LoggingDebugSession {
     }
 
     sendResponse(response) {
-        console.log(`send response: ${response.command}(${JSON.stringify(response.body) })`);
+        // console.log(`send response: ${response.command}(${JSON.stringify(response.body) })`);
         return super.sendResponse(response);
     }
 
@@ -575,9 +575,8 @@ class DebugSession extends debug.LoggingDebugSession {
         if (null == args.filter || args.filter == "named") {
 
             if (Debugger.VARIABLES_REGISTERS == args.variablesReference) {
-
+                this._host._extension._registersView._view.webview.postMessage({ type: 'registers', value: stats });
                 var registers = stats.registers;
-
                 variables = [
                     { name: "(accumulator) A",      type: "register", value: this.formatByte(registers.A), variablesReference: 0 },
                     { name: "(register) X",         type: "register", value: this.formatByte(registers.X), variablesReference: 0 },
@@ -587,9 +586,8 @@ class DebugSession extends debug.LoggingDebugSession {
                 ];
 
             } else if (Debugger.VARIABLES_FLAGS == args.variablesReference) {
-
+                this._host._extension._registersView._view.webview.postMessage({ type: 'flags', value: stats.flags });
                 var flags = stats.flags;
-
                 variables = [
                     { name: "(negative) N",    type: "flag", value: this.formatBit(flags.N), variablesReference: 0 },
                     { name: "(overflow) V",    type: "flag", value: this.formatBit(flags.V), variablesReference: 0 },
@@ -828,6 +826,10 @@ class DebugSession extends debug.LoggingDebugSession {
         this.sendEvent(e);
 
         var stats = emu.getStats();
+
+        this._host._extension._registersView._view.webview.postMessage({ type: 'registers', value: stats });
+        this._host._extension._registersView._view.webview.postMessage({ type: 'flags', value: stats.flags });
+
         var pc = stats.PC;
         var addressInfo = this.getAddressInfo(pc);
         if (null != addressInfo) {

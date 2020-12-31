@@ -29,7 +29,228 @@ var DiagnosticProvider = require('src/diagnostic_provider');
 var Debugger = require('src/debugger');
 
 //-----------------------------------------------------------------------------------------------//
-// Extension
+// Registers Webview Extension
+//-----------------------------------------------------------------------------------------------//
+
+class RegistersViewProvider {
+
+    constructor(_extensionUri) {
+        this._extensionUri = _extensionUri;
+    }
+
+    resolveWebviewView(webviewView, context, _token) {
+        this._view = webviewView;
+        webviewView.webview.options = {
+            // Allow scripts in the webview
+            enableScripts: true,
+            localResourceRoots: [
+                this._extensionUri
+            ]
+        };
+        webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
+        // webviewView.webview.onDidReceiveMessage(data => {
+        //     switch (data.type) {
+        //         case 'keyPressed':
+        //             {
+        //                 //vscode.window.activeTextEditor?.insertSnippet(new vscode.SnippetString(`#${data.value}`));
+        //                 this._view.webview.postMessage({ type: 'drawChar', charCode: data.value, hpos: 1, vpos: 20 });
+        //                 break;
+        //             }
+        //     }
+        // });
+    }
+
+    start() {
+        var _a, _b;
+        if (this._view) {
+            (_b = (_a = this._view).show) === null || _b === void 0 ? void 0 : _b.call(_a, true); // `show` is not implemented in 1.49 but is for 1.50 insiders
+            this._view.webview.postMessage({ type: 'startEmulation' });
+        }
+    }
+
+    _getHtmlForWebview(webview) {
+        // Get the local path to main script run in the webview, then convert it to a uri we can use in the webview.
+        const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'registers.js'));
+        // Do the same for the stylesheet.
+        // const styleResetUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'reset.css'));
+        const styleVSCodeUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'vscode.css'));
+        const styleMainUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media/css', 'registers.css'));
+        // Use a nonce to only allow a specific script to be run.
+        const nonce = getNonce();
+        return `<!DOCTYPE html>
+        <html lang="en">
+
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+            <link href="${styleMainUri}" rel="stylesheet">
+            <link href="${styleVSCodeUri}" rel="stylesheet">
+
+            <title>Programming Model</title>
+        </head>
+
+        <body>
+
+            <table >
+                <tbody >
+                    <tr class="bitfield">
+                        <td></td>
+                        <td colspan="8"></td>
+                        <td id='A7' class='registerBitEndLeft'>0</td>
+                        <td id='A6' class='registerBit'>0</td>
+                        <td id='A5' class='registerBit'>0</td>
+                        <td id='A4' class='registerBit'>0</td>
+                        <td id='A3' class='registerBit'>0</td>
+                        <td id='A2' class='registerBit'>0</td>
+                        <td id='A1' class='registerBit'>0</td>
+                        <td id='A0' class='registerBitEndRight'>0</td>
+                        <td></td>
+                        <td class='registerName'>A</td>
+                    </tr>
+                    <tr class="hexfield">
+                        <td></td>
+                        <td colspan="14"></td>
+                        <td id='A' colspan="2" class='registerHex'>00</td>
+                        <td></td>
+                        <td class='registerName'>A</td>
+                    </tr>
+                    <tr class='interrow'>
+                        <td colspan="16">&nbsp;</td>
+                    </tr>
+                    <tr class="bitfield">
+                        <td></td>
+                        <td colspan="8"></td>
+                        <td id='X7' class='registerBitEndLeft'>0</td>
+                        <td id='X6' class='registerBit'>0</td>
+                        <td id='X5' class='registerBit'>0</td>
+                        <td id='X4' class='registerBit'>0</td>
+                        <td id='X3' class='registerBit'>0</td>
+                        <td id='X2' class='registerBit'>0</td>
+                        <td id='X1' class='registerBit'>0</td>
+                        <td id='X0' class='registerBitEndRight'>0</td>
+                        <td></td>
+                        <td class='registerName'>X</td>
+                    </tr>
+                    <tr class="hexfield">
+                        <td></td>
+                        <td colspan="14"></td>
+                        <td id='X' colspan="2" class='registerHex'>00</td>
+                        <td></td>
+                        <td class='registerName'>X</td>
+                    </tr>
+                    <tr class='interrow'>
+                        <td colspan="16">&nbsp;</td>
+                    </tr>
+                    <tr class="bitfield">
+                        <td></td>
+                        <td colspan="8"></td>
+                        <td id='Y7' class='registerBitEndLeft'>0</td>
+                        <td id='Y6' class='registerBit'>0</td>
+                        <td id='Y5' class='registerBit'>0</td>
+                        <td id='Y4' class='registerBit'>0</td>
+                        <td id='Y3' class='registerBit'>0</td>
+                        <td id='Y2' class='registerBit'>0</td>
+                        <td id='Y1' class='registerBit'>0</td>
+                        <td id='Y0' class='registerBitEndRight'>0</td>
+                        <td></td>
+                        <td class='registerName'>Y</td>
+                    </tr>
+                    <tr class="hexfield">
+                        <td></td>
+                        <td colspan="14"></td>
+                        <td id='Y' colspan="2" class='registerHex'>00</td>
+                        <td></td>
+                        <td class='registerName'>Y</td>
+                    </tr>
+                    <tr class='interrow'>
+                        <td colspan="16">&nbsp;</td>
+                    </tr>
+                    <tr class="bitfield">
+                        <td></td>
+                        <td id='PC15' class='registerBitEndLeft'>0</td>
+                        <td id='PC14' class='registerBit'>0</td>
+                        <td id='PC13' class='registerBit'>0</td>
+                        <td id='PC12' class='registerBit'>0</td>
+                        <td id='PC11' class='registerBit'>0</td>
+                        <td id='PC10' class='registerBit'>0</td>
+                        <td id='PC9' class='registerBit'>0</td>
+                        <td id='PC8' class='registerBitEndRight'>0</td>
+                        <td id='PC7' class='registerBit'>0</td>
+                        <td id='PC6' class='registerBit'>0</td>
+                        <td id='PC5' class='registerBit'>0</td>
+                        <td id='PC4' class='registerBit'>0</td>
+                        <td id='PC3' class='registerBit'>0</td>
+                        <td id='PC2' class='registerBit'>0</td>
+                        <td id='PC1' class='registerBit'>0</td>
+                        <td id='PC0' class='registerBitEndRight'>0</td>
+                        <td></td>
+                        <td class='registerName'>"PC"</td>
+                    </tr>
+                    <tr class="hexfield">
+                        <td colspan="13"></td>
+                        <td id='PCH' colspan="2" class='registerHex'>00</td>
+                        <td id='PCL' colspan="2" class='registerHex'>00</td>
+                        <td></td>
+                        <td class='registerName'>"PC"</td>
+                    </tr>
+                    <tr class='interrow'>
+                        <td colspan="16">&nbsp;</td>
+                    </tr>
+                    <tr class="bitfield">
+                        <td></td>
+                        <td colspan="7"></td>
+                        <td id='S8' class='registerBitEndLeft hexfieldDisable'>1</td>
+                        <td id='S7' class='registerBitEndLeft'>0</td>
+                        <td id='S6' class='registerBit'>0</td>
+                        <td id='S5' class='registerBit'>0</td>
+                        <td id='S4' class='registerBit'>0</td>
+                        <td id='S3' class='registerBit'>0</td>
+                        <td id='S2' class='registerBit'>0</td>
+                        <td id='S1' class='registerBit'>0</td>
+                        <td id='S0' class='registerBitEndRight'>0</td>
+                        <td></td>
+                        <td class='registerName'>"S"</td>
+                    </tr>
+                    <tr class="hexfield">
+                        <td></td>
+                        <td colspan="12"></td>
+                        <td colspan="2" class='registerHex hexfieldDisable'>01</td>
+                        <td id='S' colspan="2" class='registerHex'>00</td>
+                        <td></td>
+                        <td class='registerName'>"S"</td>
+                    </tr>
+                    <tr >
+                        <td colspan="16">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td colspan="8"></td>
+                        <td id='Negative' class='registerFlag flagReset'>N</td>
+                        <td id='Overflow' class='registerFlag flagReset'>V</td>
+                        <td id='None' class='registerFlag flagReset'></td>
+                        <td id='Break' class='registerFlag flagReset'>B</td>
+                        <td id='Decimal' class='registerFlag flagReset'>D</td>
+                        <td id='Irq' class='registerFlag flagReset'>I</td>
+                        <td id='Zero' class='registerFlag flagReset'>Z</td>
+                        <td id='Carry' class='registerFlag flagReset'>C</td>
+                        <td></td>
+                        <td class='registerName'>"P"</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <script type="module" nonce="${nonce}" src="${scriptUri}"></script>
+        </body>
+
+        </html>`;
+    }
+}
+
+RegistersViewProvider.viewType = 'vc65x.registersView';
+
+//-----------------------------------------------------------------------------------------------//
+// Emulator UI Extension
 //-----------------------------------------------------------------------------------------------//
 
 class EmulatorViewProvider {
@@ -134,6 +355,7 @@ class Extension {
         this._settings = {};
         this._debugger = null;
         this._uiView = null;
+        this._registersView = null;
 
         this._state = {
             assemblerProcess: null,
@@ -156,6 +378,14 @@ class Extension {
         var settings = this._settings;
         var state = this._state;
         var hasWorkspace = this.hasWorkspace();
+
+        {
+            this._registersView = new RegistersViewProvider(context.extensionUri);
+            context.subscriptions.push(vscode.window.registerWebviewViewProvider(RegistersViewProvider.viewType, this._registersView));
+            // context.subscriptions.push(vscode.commands.registerCommand('systemEmulator.start', () => {
+            //     provider.start();
+            // }));
+        }
 
         {
             this._uiView = new EmulatorViewProvider(context.extensionUri);
