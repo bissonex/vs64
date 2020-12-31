@@ -61,6 +61,13 @@
 		"views": {
 			"debug": [
 				{
+					"contextualTitle": "VC65X",
+					"type": "webview",
+					"id": "vc65x.registersView",
+					"name": "Programming Model"
+				},
+				{
+					"contextualTitle": "VC65X",
 					"type": "webview",
 					"id": "vc65x.uiView",
 					"name": "65XX System Emulator"

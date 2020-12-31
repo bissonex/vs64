@@ -1,0 +1,116 @@
+table {
+    font-family: Consolas, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
+    font-size: medium;
+    border-collapse: collapse;
+    text-align: center;
+    margin-top: 20px;
+}
+
+td.registerBit {
+    border-bottom: 1pt solid rgb(145, 141, 141);
+    border-top: 1pt solid rgb(145, 141, 141);
+}
+
+td.registerBitEndLeft {
+    border-bottom: 1pt solid rgb(145, 141, 141);
+    border-top: 1pt solid rgb(145, 141, 141);
+    border-left: 1pt solid rgb(145, 141, 141);
+}
+
+td.registerBitEndMid {
+    border-left: 1pt solid rgb(145, 141, 141);
+}
+
+td.registerBitEndRight {
+    border-bottom: 1pt solid rgb(145, 141, 141);
+    border-top: 1pt solid rgb(145, 141, 141);
+    border-right: 1pt solid rgb(145, 141, 141);
+}
+
+td.registerFlag {
+    border-bottom: 1pt solid rgb(145, 141, 141);
+    border-top: 1pt solid rgb(145, 141, 141);
+    border-left: 1pt solid rgb(145, 141, 141);
+    border-right: 1pt solid rgb(145, 141, 141);
+}
+
+td.registerHex {
+    border-bottom: 1pt solid rgb(145, 141, 141);
+    border-top: 1pt solid rgb(145, 141, 141);
+    border-left: 1pt solid rgb(145, 141, 141);
+    border-right: 1pt solid rgb(145, 141, 141);
+}
+
+td.registerName {
+    border-bottom: 1pt solid rgb(0, 0, 0, 0);
+    border-top: 1pt solid rgb(0, 0, 0, 0);
+}
+
+tr.interrow {
+    font-size: xx-small;
+}
+
+tr.bitfield {
+    visibility: visible;
+}
+
+tr.hexfield {
+    visibility: collapse;
+}
+
+td.hexfieldDisable {
+    color: rgb(92, 95, 92);
+}
+
+td.flagSet {
+    color: rgb(10, 247, 42);
+}
+
+td.flagReset {
+    color: rgb(163, 165, 163);
+}
+
+@-webkit-keyframes yellow-fade {
+    from {
+        background: #f96;
+    }
+
+    to {
+        background:rgba(255, 255, 255, 0.705);
+    }
+}
+
+@-moz-keyframes yellow-fade {
+    from {
+        background: #f96;
+    }
+
+    to {
+        background: rgba(255, 255, 255, 0.705);
+    }
+}
+
+td.flagChanged {
+    background: rgba(122, 133, 170, 0.61);
+}
+
+td.flagNotChanged {
+    background: rgba(0, 0, 0, 0);
+}
+
+@keyframes yellow-fade {
+    from {
+        background: #f96;
+    }
+
+    to {
+        background: rgba(255, 255, 255, 0.705);
+    }
+}
+
+.highlight_it{
+    -webkit-animation: yellow-fade 1s ease-in-out 0s;
+    -moz-animation: yellow-fade 1s ease-in-out 0s;
+    -o-animation: yellow-fade 1s ease-in-out 0s;
+    animation: yellow-fade 1s ease-in-out 0s;
+}
