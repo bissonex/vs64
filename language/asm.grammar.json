@@ -6,9 +6,6 @@
 			"include": "#comments"
 		},
 		{
-			"include": "#strings"
-		},
-		{
 			"include": "#meta"
 		},
 		{

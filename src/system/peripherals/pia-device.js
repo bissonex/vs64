@@ -33,7 +33,7 @@ keyboard[0x20] = [0x02, 0x03];				//	SPACE
 // keyboard[0x2B] = [0x00, 0x01];				//	+
 // keyboard[0x2C] = [0x00, 0x01];				//	,
 // keyboard[0x2D] = [0x00, 0x01];				//	-
-// keyboard[0x2E] = [0x00, 0x01];				//	.
+keyboard[0x2E] = [0x03, 0x04];				//	.
 // keyboard[0x2F] = [0x00, 0x01];				//	/
 
 keyboard[0x30] = [0x00, 0x01];				//	0
@@ -102,7 +102,9 @@ const createPIADevice = (session) => {
   // });
 
   return {
-
+    reset: () => {
+      buffer = [];
+    },
     getUint16: () => 0,
     getUint8: (address) => {
       if (emulatorViewProvider == null) {

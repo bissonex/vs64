@@ -278,7 +278,13 @@ class Emulator {
 
         this._cpu.reset();
 
-        this._writableBytes.fill(0);
+        for(let i = 0; i < this._MM.regions.length; i++){
+            try {
+                this._MM.regions[i].device.reset();
+            } catch (error) {
+                console.log("device has no reset function");
+            }
+        }
 
         if (null != startAddress) {
             // set reset vector to start address
