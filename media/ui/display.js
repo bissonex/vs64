@@ -151,7 +151,7 @@
 				const nbPixelPerLine = 560 * 4;
 				var color = 0;
 
-				console.log(char, posx, posy);
+				//console.log(char, posx, posy);
 				var ptr = ((posy - 1) * 2 * 8 * nbPixelPerLine) + ((posx - 1) * 6 * 4 * 2);
 				for (let yindex = 0; yindex < 8; yindex += 1) {
 					for (let xindex = 0; xindex < 6; xindex += 1) {
