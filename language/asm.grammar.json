@@ -128,7 +128,7 @@
 			"patterns": [
 				{
 					"name": "keyword.instructions",
-					"match": "(?i)[\\s]*\\b(adc|and|asl|bit|clc|cld|cli|clv|cmp|cop|cpx|cpy|dec|dex|dey|eor|inc|inx|iny|lda|ldx|ldy|lsr|mvn|mvp|nop|ora|pea|pei|per|pha|phb|phd|phk|php|pla|plb|plp|plx|ply|rep|rol|ror|sbc|sec|sed|sei|sep|sta|stp|stx|sty|stz|tax|tay|tcd|tcs|tdc|trb|tsb|tsc|tsx|txa|txs|txy|tya|tyx|wai|wdm|xba|xce)\\b"
+					"match": "(?i)[\\s]*\\b(adc|and|asl|bit|clc|cld|cli|clv|cmp|cop|cpx|cpy|dec|dex|dey|eor|inc|inx|iny|lda|ldx|ldy|lsr|mvn|mvp|nop|ora|pea|pei|per|pha|phb|phd|phk|php|phx|phy|pla|plb|plp|plx|ply|rep|rol|ror|sbc|sec|sed|sei|sep|sta|stp|stx|sty|stz|tax|tay|tcd|tcs|tdc|trb|tsb|tsc|tsx|txa|txs|txy|tya|tyx|wai|wdm|xba|xce)\\b"
 				}
 			]
 		},
@@ -201,6 +201,10 @@
 				{
 					"name": "entity.name.function",
 					"match": "\\!(macro)\\b"
+				},
+				{
+					"name": "keyword.other",
+					"match": "\\+s*([a-zA-Z_]+)"
 				}
 			]
 		}
