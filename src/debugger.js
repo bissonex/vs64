@@ -6,7 +6,7 @@ const path = require('path');
 const fs = require('fs');
 const Net = require('net');
 const vscode = require('vscode');
-const debug = require('vscode-debugadapter');
+const debug = require('@vscode/debugadapter');
 const { Subject } = require('await-notify');
 
 //-----------------------------------------------------------------------------------------------//
